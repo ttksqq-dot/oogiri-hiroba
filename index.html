@@ -1455,13 +1455,15 @@
 
         // いいねをトグル
         window.toggleLike = async function(answerId) {
-            if (!window.currentUser) {
-                alert('いいね機能は会員限定です。Googleでログインしてください！');
-                return;
-            }
-
             try {
                 const answer = window.answers.find(a => a.id === answerId);
+                
+                // 自分の回答にはいいねできない（会員の場合）
+                if (window.currentUser && answer.userId === window.currentUser.uid) {
+                    alert('自分の回答にはいいねできません。');
+                    return;
+                }
+                
                 const answerRef = doc(db, 'answers', answerId);
                 
                 // いいね済みかチェック（ローカルストレージ）
@@ -1502,7 +1504,7 @@
                 localStorage.setItem('likedAnswers', JSON.stringify(likedAnswers));
                 await loadAnswers();
 
-                // 自分の統計も更新
+                // 自分の統計も更新（会員の場合）
                 if (window.currentUser && answer.userId === window.currentUser.uid) {
                     await loadUserStats(window.currentUser.uid);
                 }
