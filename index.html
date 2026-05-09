@@ -792,12 +792,18 @@
 
                 <div class="form-group">
                     <label for="editNicknameInput">ニックネーム</label>
+                    <p style="font-size: 0.85rem; color: #FF6B35; margin-bottom: 0.5rem; font-weight: 600;">
+                        ⚠️ ニックネームの変更は月1回までです
+                    </p>
                     <input 
                         type="text" 
                         id="editNicknameInput" 
                         placeholder="例: お笑い太郎"
                         maxlength="20"
                     >
+                    <p id="nameChangeInfo" style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                        <!-- 次回変更可能日が表示されます -->
+                    </p>
                 </div>
                 <button class="modal-btn" onclick="updateProfile()">
                     変更を保存
@@ -1055,6 +1061,7 @@
                     avatar: selectedAvatar,
                     totalLikes: 0,
                     totalPosts: 0,
+                    lastNameChange: new Date(), // 初回設定時も記録
                     createdAt: new Date()
                 });
 
@@ -1083,6 +1090,31 @@
                 
                 // ニックネームを設定
                 document.getElementById('editNicknameInput').value = userData.displayName || '';
+                
+                // 次回変更可能日の情報を表示
+                const nameChangeInfo = document.getElementById('nameChangeInfo');
+                const lastNameChange = userData.lastNameChange;
+                
+                if (lastNameChange) {
+                    const lastChangeDate = lastNameChange.toDate();
+                    const now = new Date();
+                    const daysSinceChange = (now - lastChangeDate) / (1000 * 60 * 60 * 24);
+                    
+                    if (daysSinceChange < 30) {
+                        const daysRemaining = Math.ceil(30 - daysSinceChange);
+                        const nextChangeDate = new Date(lastChangeDate);
+                        nextChangeDate.setDate(nextChangeDate.getDate() + 30);
+                        const formattedDate = `${nextChangeDate.getFullYear()}年${nextChangeDate.getMonth() + 1}月${nextChangeDate.getDate()}日`;
+                        nameChangeInfo.textContent = `次回変更可能日: ${formattedDate} (あと${daysRemaining}日)`;
+                        nameChangeInfo.style.color = '#FF6B35';
+                    } else {
+                        nameChangeInfo.textContent = '✅ ニックネームを変更できます';
+                        nameChangeInfo.style.color = '#4CAF50';
+                    }
+                } else {
+                    nameChangeInfo.textContent = '✅ ニックネームを変更できます';
+                    nameChangeInfo.style.color = '#4CAF50';
+                }
                 
                 // 現在のアイコンを設定
                 selectedAvatar = currentAvatar;
