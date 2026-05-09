@@ -1082,6 +1082,50 @@
                 gap: 1rem;
             }
         }
+
+        /* 総投稿数バナー */
+        .total-posts-banner {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(255, 200, 87, 0.2);
+        }
+
+        .total-posts-banner .banner-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-posts-banner .banner-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.3rem;
+        }
+
+        .total-posts-banner .banner-count {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        @media (max-width: 768px) {
+            .total-posts-banner {
+                padding: 0.8rem 1rem;
+            }
+
+            .total-posts-banner .banner-icon {
+                font-size: 1.5rem;
+            }
+
+            .total-posts-banner .banner-count {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1144,6 +1188,14 @@
         <button class="back-to-list-btn" id="backToListBtn" onclick="showOdaiList()" style="display: none;">
             ← お題一覧に戻る
         </button>
+
+        <!-- 総投稿数バナー -->
+        <div class="total-posts-banner">
+            <div class="banner-icon">💬</div>
+            <div class="banner-text">サイト全体の総投稿数</div>
+            <div class="banner-count" id="totalPostsCount">0</div>
+            <div class="banner-text">件の回答</div>
+        </div>
 
         <!-- 会員統計 -->
         <div class="stats-section" id="statsSection" style="display: none;">
@@ -2494,6 +2546,7 @@
                 await loadUserStats(user.uid);
                 await loadUserRanking(user.uid);
                 await loadAnswers();
+                await loadTotalPostsCount();
             } else {
                 // ゲストモード
                 userInfo.innerHTML = `
@@ -2525,6 +2578,7 @@
                 }
 
                 await loadAnswers();
+                await loadTotalPostsCount();
             }
         });
 
@@ -2670,6 +2724,9 @@
 
                 // 回答リストを更新
                 await loadAnswers();
+                
+                // 総投稿数を更新
+                await loadTotalPostsCount();
 
                 // 投稿成功のフィードバック
                 const submitBtn = document.querySelector('.submit-btn');
@@ -2718,6 +2775,20 @@
                         <p class="empty-state-text">回答の読み込みに失敗しました。</p>
                     </div>
                 `;
+            }
+        }
+
+        // 総投稿数を読み込み
+        async function loadTotalPostsCount() {
+            try {
+                const q = query(collection(db, 'answers'));
+                const querySnapshot = await getDocs(q);
+                const totalCount = querySnapshot.size;
+                
+                document.getElementById('totalPostsCount').textContent = totalCount.toLocaleString();
+            } catch (error) {
+                console.error('総投稿数読み込みエラー:', error);
+                document.getElementById('totalPostsCount').textContent = '-';
             }
         }
 
