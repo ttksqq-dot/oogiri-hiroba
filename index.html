@@ -163,7 +163,7 @@
             margin-bottom: 2rem;
             box-shadow: 0 4px 20px var(--shadow);
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1rem;
         }
 
@@ -505,6 +505,50 @@
             transform: none;
         }
 
+        .avatar-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+
+        .avatar-option {
+            aspect-ratio: 1;
+            border: 3px solid #E0E0E0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: #f8f9fa;
+        }
+
+        .avatar-option:hover {
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .avatar-option.selected {
+            border-color: var(--primary);
+            border-width: 4px;
+            background: linear-gradient(135deg, #FFE5E5 0%, #FFD0D0 100%);
+        }
+
+        .current-avatar-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            border: 3px solid var(--primary);
+            font-size: 3rem;
+            margin: 0 auto 1rem;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -522,6 +566,11 @@
 
             .edit-profile-btn {
                 width: 100%;
+            }
+
+            .avatar-selector {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 0.5rem;
             }
         }
     </style>
@@ -620,12 +669,24 @@
     <div class="modal" id="nicknameModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">ニックネームを設定</h3>
+                <h3 class="modal-title">プロフィールを設定</h3>
             </div>
             <div class="modal-body">
                 <p class="modal-description">
-                    サイトで使用するニックネームを設定してください。本名ではなく、お好きな名前をご利用いただけます。
+                    サイトで使用するニックネームとアイコンを設定してください。本名ではなく、お好きな名前をご利用いただけます。
                 </p>
+                
+                <div class="form-group">
+                    <label>アイコンを選択</label>
+                    <div class="avatar-selector">
+                        <div class="avatar-option selected" data-avatar="👤" onclick="selectAvatarInitial('👤')">👤</div>
+                        <div class="avatar-option" data-avatar="🦝" onclick="selectAvatarInitial('🦝')">🦝</div>
+                        <div class="avatar-option" data-avatar="🐶" onclick="selectAvatarInitial('🐶')">🐶</div>
+                        <div class="avatar-option" data-avatar="🐱" onclick="selectAvatarInitial('🐱')">🐱</div>
+                        <div class="avatar-option" data-avatar="🐼" onclick="selectAvatarInitial('🐼')">🐼</div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="nicknameInput">ニックネーム</label>
                     <input 
@@ -651,6 +712,22 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
+                    <label>現在のアイコン</label>
+                    <div class="current-avatar-display" id="currentAvatarDisplay">👤</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>アイコンを選択</label>
+                    <div class="avatar-selector">
+                        <div class="avatar-option" data-avatar="👤" onclick="selectAvatar('👤')">👤</div>
+                        <div class="avatar-option" data-avatar="🦝" onclick="selectAvatar('🦝')">🦝</div>
+                        <div class="avatar-option" data-avatar="🐶" onclick="selectAvatar('🐶')">🐶</div>
+                        <div class="avatar-option" data-avatar="🐱" onclick="selectAvatar('🐱')">🐱</div>
+                        <div class="avatar-option" data-avatar="🐼" onclick="selectAvatar('🐼')">🐼</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label for="editNicknameInput">ニックネーム</label>
                     <input 
                         type="text" 
@@ -659,7 +736,7 @@
                         maxlength="20"
                     >
                 </div>
-                <button class="modal-btn" onclick="updateNickname()">
+                <button class="modal-btn" onclick="updateProfile()">
                     変更を保存
                 </button>
             </div>
@@ -726,6 +803,33 @@
         const randomOdai = odaiList[Math.floor(Math.random() * odaiList.length)];
         document.getElementById('odai').textContent = randomOdai;
 
+        // アイコン選択用のグローバル変数
+        let selectedAvatar = '👤'; // デフォルトアイコン
+
+        // 初回登録用のアイコン選択
+        window.selectAvatarInitial = function(avatar) {
+            selectedAvatar = avatar;
+            // すべての選択状態をリセット
+            document.querySelectorAll('#nicknameModal .avatar-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            // 選択されたものをハイライト
+            document.querySelector(`#nicknameModal .avatar-option[data-avatar="${avatar}"]`).classList.add('selected');
+        };
+
+        // プロフィール編集用のアイコン選択
+        window.selectAvatar = function(avatar) {
+            selectedAvatar = avatar;
+            // すべての選択状態をリセット
+            document.querySelectorAll('#editProfileModal .avatar-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            // 選択されたものをハイライト
+            document.querySelector(`#editProfileModal .avatar-option[data-avatar="${avatar}"]`).classList.add('selected');
+            // プレビュー更新
+            document.getElementById('currentAvatarDisplay').textContent = avatar;
+        };
+
         // Googleログイン
         window.loginWithGoogle = async function() {
             try {
@@ -787,6 +891,7 @@
                 
                 await setDoc(userRef, {
                     displayName: nickname,
+                    avatar: selectedAvatar,
                     totalLikes: 0,
                     totalPosts: 0,
                     createdAt: new Date()
@@ -813,7 +918,25 @@
             
             if (userDoc.exists()) {
                 const userData = userDoc.data();
+                const currentAvatar = userData.avatar || '👤';
+                
+                // ニックネームを設定
                 document.getElementById('editNicknameInput').value = userData.displayName || '';
+                
+                // 現在のアイコンを設定
+                selectedAvatar = currentAvatar;
+                document.getElementById('currentAvatarDisplay').textContent = currentAvatar;
+                
+                // アイコン選択をリセット
+                document.querySelectorAll('#editProfileModal .avatar-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                // 現在のアイコンを選択状態に
+                const currentOption = document.querySelector(`#editProfileModal .avatar-option[data-avatar="${currentAvatar}"]`);
+                if (currentOption) {
+                    currentOption.classList.add('selected');
+                }
+                
                 document.getElementById('editProfileModal').classList.add('show');
             }
         };
@@ -823,8 +946,8 @@
             document.getElementById('editProfileModal').classList.remove('show');
         };
 
-        // ニックネームを更新
-        window.updateNickname = async function() {
+        // プロフィールを更新
+        window.updateProfile = async function() {
             const nicknameInput = document.getElementById('editNicknameInput');
             const nickname = nicknameInput.value.trim();
             
@@ -843,7 +966,8 @@
                 const userRef = doc(db, 'users', user.uid);
                 
                 await updateDoc(userRef, {
-                    displayName: nickname
+                    displayName: nickname,
+                    avatar: selectedAvatar
                 });
 
                 // モーダルを閉じる
@@ -852,10 +976,10 @@
                 // UIを更新
                 await loadUserStats(user.uid);
                 
-                alert('ニックネームを変更しました！');
+                alert('プロフィールを変更しました！');
             } catch (error) {
-                console.error('ニックネーム更新エラー:', error);
-                alert('ニックネームの変更に失敗しました');
+                console.error('プロフィール更新エラー:', error);
+                alert('プロフィールの変更に失敗しました');
             }
         };
 
@@ -873,15 +997,19 @@
                 const userRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userRef);
                 let displayName = user.displayName;
+                let userAvatar = '👤'; // デフォルト
                 
                 if (userDoc.exists()) {
                     displayName = userDoc.data().displayName || user.displayName;
+                    userAvatar = userDoc.data().avatar || '👤';
                 }
 
                 // ログイン済み
                 userInfo.innerHTML = `
                     <div class="user-profile">
-                        <img src="${user.photoURL}" alt="Avatar" class="user-avatar">
+                        <div class="user-avatar" style="display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: white;">
+                            ${userAvatar}
+                        </div>
                         <span class="user-name">
                             ${displayName}
                             <span class="member-badge">会員</span>
@@ -1156,7 +1284,7 @@
         document.getElementById('editNicknameInput').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                window.updateNickname();
+                window.updateProfile();
             }
         });
     </script>
