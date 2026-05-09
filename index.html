@@ -377,27 +377,80 @@
             gap: 0.3rem;
         }
 
-        .like-btn {
-            background: white;
-            border: 2px solid #E0E0E0;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+        /* 星評価システム */
+        .rating-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.3rem;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.2rem;
+            font-size: 1.5rem;
             cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
+        }
+
+        .rating-stars .star {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .rating-stars .star:hover,
+        .rating-stars .star.hover {
+            transform: scale(1.2);
+        }
+
+        .rating-stars .star.filled {
+            color: #FFD700;
+        }
+
+        .rating-stars .star.empty {
+            color: #E0E0E0;
+        }
+
+        .rating-score {
+            font-size: 0.85rem;
+            color: var(--text-light);
             display: flex;
             align-items: center;
             gap: 0.3rem;
         }
 
-        .like-btn:hover {
-            transform: scale(1.05);
-            border-color: var(--primary);
+        .rating-score .score-number {
+            font-weight: 700;
+            color: var(--primary);
         }
 
-        .like-btn.liked {
-            background: linear-gradient(135deg, #FFE5E5 0%, #FFD0D0 100%);
-            border-color: #FF6B6B;
+        /* ソート切り替えボタン */
+        .sort-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+        }
+
+        .sort-btn {
+            background: white;
+            border: 2px solid #E0E0E0;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .sort-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .sort-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-color: var(--primary);
         }
 
         .empty-state {
@@ -801,7 +854,7 @@
         <div class="stats-section" id="statsSection" style="display: none;">
             <div class="stat-item">
                 <span class="stat-value" id="totalLikes">0</span>
-                <div class="stat-label">累計いいね</div>
+                <div class="stat-label">累計評価</div>
             </div>
             <div class="stat-item">
                 <span class="stat-value" id="totalPosts">0</span>
@@ -812,7 +865,7 @@
                 <div class="stat-label">レベル</div>
             </div>
             <div class="stat-item">
-                <span class="stat-value">-</span>
+                <span class="stat-value" id="userRanking">-</span>
                 <div class="stat-label">ランキング</div>
             </div>
         </div>
@@ -830,7 +883,7 @@
                     👤 ゲストモード
                 </div>
                 <div class="guest-notice-text">
-                    ゲストでも投稿できますが、会員登録すると累計いいね数、レベル、ランキングなどの特典が使えます！
+                    ゲストでも投稿できますが、会員登録すると累計評価スコア、レベル、ランキングなどの特典が使えます！
                 </div>
                 <div class="guest-notice-text" id="guestPostCount" style="margin-top: 0.5rem; font-weight: 700; color: #FF6B35;">
                     <!-- 残り投稿回数が表示されます -->
@@ -864,6 +917,11 @@
             <h2 class="section-title">
                 💬 みんなの回答
             </h2>
+            <!-- ソート切り替えボタン -->
+            <div class="sort-buttons">
+                <button class="sort-btn active" id="sortByRating" onclick="setSortMode('rating')">⭐ 評価が高い順</button>
+                <button class="sort-btn" id="sortByNew" onclick="setSortMode('new')">🕐 新着順</button>
+            </div>
             <div id="answersList">
                 <div class="empty-state">
                     <div class="empty-state-icon">🔄</div>
@@ -1255,6 +1313,9 @@
 
         // 現在選択されているお題のインデックス
         let currentOdaiIndex = null;
+        
+        // ソートモード ('rating' or 'new')
+        let sortMode = 'rating';
 
         // URLパラメータから お題インデックスを取得
         function getOdaiIndexFromURL() {
@@ -1296,6 +1357,18 @@
             document.getElementById('backToListBtn').style.display = 'inline-flex';
             document.getElementById('odai').textContent = odaiList[index];
             loadAnswers();
+        };
+
+        // ソートモードを切り替え
+        window.setSortMode = function(mode) {
+            sortMode = mode;
+            
+            // ボタンのアクティブ状態を切り替え
+            document.getElementById('sortByRating').classList.toggle('active', mode === 'rating');
+            document.getElementById('sortByNew').classList.toggle('active', mode === 'new');
+            
+            // 回答を再表示
+            displayAnswers();
         };
 
         // お題一覧をレンダリング
@@ -1575,7 +1648,8 @@
                 await setDoc(userRef, {
                     displayName: nickname,
                     avatar: selectedAvatar,
-                    totalLikes: 0,
+                    totalRating: 0,      // 累計評価スコア
+                    totalLikes: 0,       // 旧システム用（互換性のため残す）
                     totalPosts: 0,
                     lastNameChange: new Date(), // 初回設定時も記録
                     createdAt: new Date()
@@ -1586,6 +1660,7 @@
                 
                 // UIを更新
                 await loadUserStats(user.uid);
+                await loadUserRanking(user.uid);
             } catch (error) {
                 console.error('ニックネーム保存エラー:', error);
                 alert('ニックネームの保存に失敗しました');
@@ -1790,6 +1865,7 @@
                 nameInput.style.display = 'none';
 
                 await loadUserStats(user.uid);
+                await loadUserRanking(user.uid);
                 await loadAnswers();
             } else {
                 // ゲストモード
@@ -1836,7 +1912,8 @@
 
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
-                    document.getElementById('totalLikes').textContent = userData.totalLikes || 0;
+                    // 累計いいね → 累計評価スコアに変更
+                    document.getElementById('totalLikes').textContent = userData.totalRating || 0;
                     document.getElementById('totalPosts').textContent = userData.totalPosts || 0;
                     
                     // レベル計算（投稿数ベース）
@@ -1845,6 +1922,36 @@
                 }
             } catch (error) {
                 console.error('統計読み込みエラー:', error);
+            }
+        }
+
+        // ユーザーのランキングを読み込み
+        async function loadUserRanking(userId) {
+            try {
+                // 全ユーザーをtotalRating順で取得
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, orderBy('totalRating', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                let ranking = 1;
+                let found = false;
+                
+                querySnapshot.forEach((doc) => {
+                    if (doc.id === userId) {
+                        document.getElementById('userRanking').textContent = `${ranking}位`;
+                        found = true;
+                    }
+                    if (!found) {
+                        ranking++;
+                    }
+                });
+                
+                if (!found) {
+                    document.getElementById('userRanking').textContent = '-';
+                }
+            } catch (error) {
+                console.error('ランキング読み込みエラー:', error);
+                document.getElementById('userRanking').textContent = '-';
             }
         }
 
@@ -1896,7 +2003,9 @@
                 await addDoc(collection(db, 'answers'), {
                     name: name,
                     text: answer,
-                    likes: 0,
+                    totalRating: 0,      // 評価スコア合計
+                    ratingCount: 0,      // 評価した人数
+                    likes: 0,            // 旧システム用（互換性のため残す）
                     userId: window.currentUser ? window.currentUser.uid : null,
                     isGuest: !window.currentUser,
                     odai: document.getElementById('odai').textContent,
@@ -1910,6 +2019,7 @@
                         totalPosts: increment(1)
                     });
                     await loadUserStats(window.currentUser.uid);
+                    await loadUserRanking(window.currentUser.uid);
                 } else {
                     // ゲストの場合、LocalStorageに投稿日時を保存
                     const guestPosts = JSON.parse(localStorage.getItem('guestPosts')) || [];
@@ -2043,7 +2153,7 @@
         // 回答を表示
         function displayAnswers() {
             const answersList = document.getElementById('answersList');
-            const likedAnswers = JSON.parse(localStorage.getItem('likedAnswers')) || [];
+            const ratedAnswers = JSON.parse(localStorage.getItem('ratedAnswers')) || {};
 
             if (window.answers.length === 0) {
                 answersList.innerHTML = `
@@ -2055,12 +2165,25 @@
                 return;
             }
 
-            // いいね数が多い順にソート
-            const sortedAnswers = [...window.answers].sort((a, b) => b.likes - a.likes);
+            // ソートモードに応じてソート
+            let sortedAnswers;
+            if (sortMode === 'rating') {
+                // 評価が高い順（合計スコア順）
+                sortedAnswers = [...window.answers].sort((a, b) => (b.totalRating || 0) - (a.totalRating || 0));
+            } else {
+                // 新着順（投稿日時が新しい順）
+                sortedAnswers = [...window.answers].sort((a, b) => {
+                    const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+                    const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+                    return dateB - dateA;
+                });
+            }
 
             answersList.innerHTML = sortedAnswers.map(answer => {
-                const isLiked = likedAnswers.includes(answer.id);
+                const myRating = ratedAnswers[answer.id] || 0;
                 const memberBadge = !answer.isGuest ? '<span class="member-badge">会員</span>' : '';
+                const totalRating = answer.totalRating || 0;
+                const ratingCount = answer.ratingCount || 0;
                 
                 // 日付をフォーマット
                 let dateStr = '';
@@ -2073,6 +2196,21 @@
                     const minutes = String(date.getMinutes()).padStart(2, '0');
                     dateStr = `${year}/${month}/${day} ${hours}:${minutes}`;
                 }
+
+                // 自分の回答かチェック（会員のみ）
+                const isMyAnswer = window.currentUser && answer.userId === window.currentUser.uid;
+                
+                // 星を生成（1〜5）
+                let starsHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    const filled = i <= myRating;
+                    starsHtml += `<span class="star ${filled ? 'filled' : 'empty'}" 
+                                       data-answer-id="${answer.id}" 
+                                       data-rating="${i}" 
+                                       onclick="${isMyAnswer ? '' : 'rateAnswer(\"' + answer.id + '\", ' + i + ')'}"
+                                       ${isMyAnswer ? '' : 'onmouseover="hoverStars(\"' + answer.id + '\", ' + i + ')" onmouseout="unhoverStars(\"' + answer.id + '\")'}"
+                                       style="${isMyAnswer ? 'cursor: not-allowed; opacity: 0.5;' : ''}">⭐</span>`;
+                }
                 
                 return `
                     <div class="answer-card">
@@ -2081,9 +2219,15 @@
                                 ${escapeHtml(answer.name)}
                                 ${memberBadge}
                             </span>
-                            <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${answer.id}')">
-                                ${isLiked ? '❤️' : '🤍'} ${answer.likes}
-                            </button>
+                            <div class="rating-container">
+                                <div class="rating-stars" id="stars-${answer.id}">
+                                    ${starsHtml}
+                                </div>
+                                <div class="rating-score">
+                                    ⭐ <span class="score-number">${totalRating}</span>点 
+                                    ${ratingCount > 0 ? `(${ratingCount}人が評価)` : ''}
+                                </div>
+                            </div>
                         </div>
                         <div class="answer-text">${escapeHtml(answer.text)}</div>
                         ${dateStr ? `<div class="answer-date">📅 ${dateStr}</div>` : ''}
@@ -2091,6 +2235,98 @@
                 `;
             }).join('');
         }
+
+        // 星にホバーした時の効果
+        window.hoverStars = function(answerId, rating) {
+            const starsContainer = document.getElementById(`stars-${answerId}`);
+            if (!starsContainer) return;
+            
+            const stars = starsContainer.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('hover');
+                } else {
+                    star.classList.remove('hover');
+                }
+            });
+        };
+
+        // 星のホバーを解除
+        window.unhoverStars = function(answerId) {
+            const starsContainer = document.getElementById(`stars-${answerId}`);
+            if (!starsContainer) return;
+            
+            const stars = starsContainer.querySelectorAll('.star');
+            stars.forEach(star => {
+                star.classList.remove('hover');
+            });
+        };
+
+        // 回答を評価
+        window.rateAnswer = async function(answerId, rating) {
+            try {
+                const answer = window.answers.find(a => a.id === answerId);
+                if (!answer) return;
+
+                // 自分の回答には評価できない（会員のみチェック）
+                if (window.currentUser && answer.userId === window.currentUser.uid) {
+                    alert('自分の回答には評価できません。');
+                    return;
+                }
+
+                const ratedAnswers = JSON.parse(localStorage.getItem('ratedAnswers')) || {};
+                const previousRating = ratedAnswers[answerId] || 0;
+
+                // 評価を更新
+                const answerRef = doc(db, 'answers', answerId);
+                
+                if (previousRating === 0) {
+                    // 新規評価
+                    await updateDoc(answerRef, {
+                        totalRating: increment(rating),
+                        ratingCount: increment(1)
+                    });
+                    
+                    // 回答者が会員の場合、totalRatingを更新
+                    if (answer.userId) {
+                        const userRef = doc(db, 'users', answer.userId);
+                        await updateDoc(userRef, {
+                            totalRating: increment(rating)
+                        });
+                    }
+                } else {
+                    // 評価を変更
+                    const diff = rating - previousRating;
+                    await updateDoc(answerRef, {
+                        totalRating: increment(diff)
+                    });
+                    
+                    // 回答者が会員の場合、totalRatingを更新
+                    if (answer.userId) {
+                        const userRef = doc(db, 'users', answer.userId);
+                        await updateDoc(userRef, {
+                            totalRating: increment(diff)
+                        });
+                    }
+                }
+
+                // LocalStorageに保存
+                ratedAnswers[answerId] = rating;
+                localStorage.setItem('ratedAnswers', JSON.stringify(ratedAnswers));
+
+                // 回答を再読み込み
+                await loadAnswers();
+
+                // 自分の統計も更新（会員の場合）
+                if (window.currentUser) {
+                    await loadUserStats(window.currentUser.uid);
+                    await loadUserRanking(window.currentUser.uid);
+                }
+            } catch (error) {
+                console.error('評価エラー:', error);
+                alert('評価に失敗しました。');
+            }
+        };
 
         function escapeHtml(text) {
             const div = document.createElement('div');
