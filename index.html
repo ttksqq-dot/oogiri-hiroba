@@ -2849,10 +2849,9 @@
                     const filled = i <= myRating;
                     starsHtml += `<span class="star ${filled ? 'filled' : 'empty'}" 
                                        data-answer-id="${answer.id}" 
-                                       data-rating="${i}" 
-                                       onclick="${isMyAnswer ? '' : 'rateAnswer(\\"' + answer.id + '\\", ' + i + ')'}"
-                                       ${isMyAnswer ? '' : 'onmouseover="hoverStars(\\"' + answer.id + '\\", ' + i + ')" onmouseout="unhoverStars(\\"' + answer.id + '\\")"'}
-                                       style="${isMyAnswer ? 'cursor: not-allowed; opacity: 0.5;' : ''}">⭐</span>`;
+                                       data-rating="${i}"
+                                       data-can-rate="${!isMyAnswer}"
+                                       style="${isMyAnswer ? 'cursor: not-allowed; opacity: 0.5;' : 'cursor: pointer;'}">⭐</span>`;
                 }
                 
                 return `
@@ -2882,6 +2881,50 @@
                     </div>
                 `;
             }).join('');
+            
+            // イベント委譲で星評価のクリックを処理（初回のみ登録）
+            if (!window.starEventListenersAdded) {
+                window.starEventListenersAdded = true;
+                
+                const answersList = document.getElementById('answersList');
+                
+                // クリックイベント
+                answersList.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('star')) {
+                        const answerId = e.target.dataset.answerId;
+                        const rating = parseInt(e.target.dataset.rating);
+                        const canRate = e.target.dataset.canRate === 'true';
+                        
+                        if (canRate) {
+                            window.rateAnswer(answerId, rating);
+                        }
+                    }
+                });
+                
+                // ホバーイベント
+                answersList.addEventListener('mouseover', function(e) {
+                    if (e.target.classList.contains('star')) {
+                        const answerId = e.target.dataset.answerId;
+                        const rating = parseInt(e.target.dataset.rating);
+                        const canRate = e.target.dataset.canRate === 'true';
+                        
+                        if (canRate) {
+                            window.hoverStars(answerId, rating);
+                        }
+                    }
+                });
+                
+                answersList.addEventListener('mouseout', function(e) {
+                    if (e.target.classList.contains('star')) {
+                        const answerId = e.target.dataset.answerId;
+                        const canRate = e.target.dataset.canRate === 'true';
+                        
+                        if (canRate) {
+                            window.unhoverStars(answerId);
+                        }
+                    }
+                });
+            }
         }
 
         // 星にホバーした時の効果
