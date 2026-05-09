@@ -682,6 +682,9 @@
                 <div class="guest-notice-text">
                     ゲストでも投稿できますが、会員登録すると累計いいね数、レベル、ランキングなどの特典が使えます！
                 </div>
+                <div class="guest-notice-text" id="guestPostCount" style="margin-top: 0.5rem; font-weight: 700; color: #FF6B35;">
+                    <!-- 残り投稿回数が表示されます -->
+                </div>
             </div>
 
             <div class="form-group">
@@ -1289,6 +1292,22 @@
                 nameLabel.style.display = 'block';
                 nameInput.style.display = 'block';
 
+                // ゲストの残り投稿回数を表示
+                const guestPosts = JSON.parse(localStorage.getItem('guestPosts')) || [];
+                const today = new Date().toDateString();
+                const todayPosts = guestPosts.filter(post => {
+                    const postDate = new Date(post).toDateString();
+                    return postDate === today;
+                });
+                const remainingPosts = 2 - todayPosts.length;
+                const guestPostCount = document.getElementById('guestPostCount');
+                
+                if (remainingPosts > 0) {
+                    guestPostCount.textContent = `📝 本日の残り投稿回数: ${remainingPosts}回`;
+                } else {
+                    guestPostCount.textContent = `⚠️ 本日の投稿上限に達しました。会員登録すると無制限に投稿できます！`;
+                }
+
                 await loadAnswers();
             }
         });
@@ -1327,6 +1346,21 @@
             } else {
                 // ゲストの場合
                 name = nameInput.value.trim();
+                
+                // ゲストの投稿制限チェック
+                const guestPosts = JSON.parse(localStorage.getItem('guestPosts')) || [];
+                const today = new Date().toDateString();
+                
+                // 今日の投稿のみをフィルター
+                const todayPosts = guestPosts.filter(post => {
+                    const postDate = new Date(post).toDateString();
+                    return postDate === today;
+                });
+                
+                if (todayPosts.length >= 2) {
+                    alert('ゲストは1日2回まで投稿できます。\n会員登録すると無制限に投稿できます！\n\n右上の「Googleでログイン」ボタンから登録してください。');
+                    return;
+                }
             }
             
             const answer = answerInput.value.trim();
@@ -1360,6 +1394,17 @@
                         totalPosts: increment(1)
                     });
                     await loadUserStats(window.currentUser.uid);
+                } else {
+                    // ゲストの場合、LocalStorageに投稿日時を保存
+                    const guestPosts = JSON.parse(localStorage.getItem('guestPosts')) || [];
+                    guestPosts.push(new Date().toISOString());
+                    
+                    // 古いデータを削除（30日以上前）
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                    const filteredPosts = guestPosts.filter(post => new Date(post) > thirtyDaysAgo);
+                    
+                    localStorage.setItem('guestPosts', JSON.stringify(filteredPosts));
                 }
 
                 // 入力欄をクリア
