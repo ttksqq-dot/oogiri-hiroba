@@ -162,9 +162,10 @@
             padding: 1.5rem;
             margin-bottom: 2rem;
             box-shadow: 0 4px 20px var(--shadow);
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            display: flex !important;
+            flex-direction: row !important;
             gap: 1rem;
+            flex-wrap: nowrap;
         }
 
         .stat-item {
@@ -172,6 +173,8 @@
             padding: 1rem;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 15px;
+            flex: 1;
+            min-width: 0;
         }
 
         .stat-value {
@@ -590,21 +593,25 @@
             }
 
             .stats-section {
-                grid-template-columns: repeat(4, 1fr);
+                display: flex !important;
+                flex-direction: row !important;
                 gap: 0.5rem;
                 padding: 1rem;
+                flex-wrap: nowrap;
             }
 
             .stat-item {
                 padding: 0.5rem;
+                flex: 1;
+                min-width: 0;
             }
 
             .stat-value {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
             }
 
             .stat-label {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
             }
 
             .user-info {
@@ -1129,11 +1136,40 @@
             try {
                 const user = auth.currentUser;
                 const userRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userRef);
                 
-                await updateDoc(userRef, {
-                    displayName: nickname,
-                    avatar: selectedAvatar
-                });
+                // 現在のニックネームと同じ場合はアイコンのみ更新
+                const currentData = userDoc.data();
+                const currentNickname = currentData.displayName || '';
+                
+                // ニックネームが変更されている場合、最終変更日をチェック
+                if (nickname !== currentNickname) {
+                    const lastNameChange = currentData.lastNameChange;
+                    
+                    if (lastNameChange) {
+                        const lastChangeDate = lastNameChange.toDate();
+                        const now = new Date();
+                        const daysSinceChange = (now - lastChangeDate) / (1000 * 60 * 60 * 24);
+                        
+                        if (daysSinceChange < 30) {
+                            const daysRemaining = Math.ceil(30 - daysSinceChange);
+                            alert(`ニックネームは月1回しか変更できません。あと${daysRemaining}日後に変更可能です。`);
+                            return;
+                        }
+                    }
+                    
+                    // ニックネーム変更
+                    await updateDoc(userRef, {
+                        displayName: nickname,
+                        avatar: selectedAvatar,
+                        lastNameChange: new Date()
+                    });
+                } else {
+                    // アイコンのみ変更
+                    await updateDoc(userRef, {
+                        avatar: selectedAvatar
+                    });
+                }
 
                 // モーダルを閉じる
                 closeEditProfileModal();
