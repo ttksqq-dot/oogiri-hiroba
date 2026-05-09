@@ -1087,43 +1087,50 @@
         .total-posts-banner {
             background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
             border: 2px solid var(--accent);
-            border-radius: 15px;
-            padding: 1rem 1.5rem;
-            margin: 1.5rem 0;
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            margin: 1rem 0;
             text-align: center;
             box-shadow: 0 2px 10px rgba(255, 200, 87, 0.2);
+            display: inline-block;
+            min-width: 200px;
         }
 
         .total-posts-banner .banner-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
         }
 
         .total-posts-banner .banner-text {
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             color: var(--text-light);
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
         }
 
         .total-posts-banner .banner-count {
             font-family: 'Zen Maru Gothic', sans-serif;
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 900;
             color: var(--primary);
-            line-height: 1;
+            line-height: 1.2;
         }
 
         @media (max-width: 768px) {
             .total-posts-banner {
-                padding: 0.8rem 1rem;
+                padding: 0.6rem 1rem;
+                min-width: 180px;
             }
 
             .total-posts-banner .banner-icon {
-                font-size: 1.5rem;
+                font-size: 1.1rem;
             }
 
             .total-posts-banner .banner-count {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
+            }
+            
+            .total-posts-banner .banner-text {
+                font-size: 0.7rem;
             }
         }
     </style>
