@@ -942,11 +942,10 @@
         <!-- 広告枠1: お題と投稿フォームの間 -->
         <div class="ad-container">
             <div class="ad-label">スポンサーリンク</div>
-            <!-- 忍者AdMax: 審査中はここに忍者AdMaxのコードを設置 -->
-            <!-- 審査通過後はAdSenseのコードに差し替え -->
-            <div id="ad-top" style="min-height: 250px; display: flex; align-items: center; justify-content: center; color: #999;">
-                <!-- ここに忍者AdMaxまたはAdSenseのコードを設置 -->
-                広告枠（300×250）
+            <div id="ad-top">
+                <!-- 忍者AdMax -->
+                <script src="https://adm.shinobi.jp/s/815c4ecac82f455b6ec11f17d531f48d"></script>
+                <!-- admax -->
             </div>
         </div>
 
@@ -989,9 +988,20 @@
         <!-- 広告枠2: 投稿フォームと回答リストの間 -->
         <div class="ad-container">
             <div class="ad-label">スポンサーリンク</div>
-            <div id="ad-middle" style="min-height: 250px; display: flex; align-items: center; justify-content: center; color: #999;">
-                <!-- ここに忍者AdMaxまたはAdSenseのコードを設置 -->
-                広告枠（336×280）
+            <div id="ad-middle">
+                <!-- 忍者AdMax -->
+                <script src="https://adm.shinobi.jp/s/815c4ecac82f455b6ec11f17d531f48d"></script>
+                <!-- admax -->
+            </div>
+        </div>
+
+        <!-- 広告枠3: スマホ専用 -->
+        <div class="ad-container" style="display: none;" id="ad-mobile">
+            <div class="ad-label">スポンサーリンク</div>
+            <div>
+                <!-- 忍者AdMax スマホ向け -->
+                <script src="https://adm.shinobi.jp/s/9d7fac529dd8c4789b9ceee05f5bb4d1"></script>
+                <!-- admax -->
             </div>
         </div>
 
@@ -2650,6 +2660,24 @@
             if (e.key === 'Enter') {
                 e.preventDefault();
                 window.updateProfile();
+            }
+        });
+
+        // スマホ判定でモバイル広告を表示
+        function isMobile() {
+            return window.innerWidth <= 768;
+        }
+
+        if (isMobile()) {
+            document.getElementById('ad-mobile').style.display = 'block';
+        }
+
+        // リサイズ時にも判定
+        window.addEventListener('resize', function() {
+            if (isMobile()) {
+                document.getElementById('ad-mobile').style.display = 'block';
+            } else {
+                document.getElementById('ad-mobile').style.display = 'none';
             }
         });
     </script>
