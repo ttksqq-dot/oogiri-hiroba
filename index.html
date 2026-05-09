@@ -1104,13 +1104,16 @@
         // 初期化：URLパラメータをチェック
         const initialOdaiIndex = getOdaiIndexFromURL();
         if (initialOdaiIndex !== null && initialOdaiIndex >= 0 && initialOdaiIndex < odaiList.length) {
-            // 特定のお題を表示
+            // URLパラメータで特定のお題を表示
             currentOdaiIndex = initialOdaiIndex;
             document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
             document.getElementById('backToListBtn').style.display = 'inline-flex';
         } else {
-            // お題一覧を表示
-            showOdaiList();
+            // ランダムでお題を表示
+            currentOdaiIndex = Math.floor(Math.random() * odaiList.length);
+            document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
+            updateURL(currentOdaiIndex);
+            document.getElementById('backToListBtn').style.display = 'inline-flex';
         }
 
         // アイコン選択用のグローバル変数
