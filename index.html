@@ -175,6 +175,13 @@
             border-radius: 15px;
             flex: 1;
             min-width: 0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
         }
 
         .stat-value {
@@ -879,21 +886,21 @@
 
         <!-- 会員統計 -->
         <div class="stats-section" id="statsSection" style="display: none;">
-            <div class="stat-item">
+            <div class="stat-item" onclick="showStatInfo('rating')" style="cursor: pointer;">
                 <span class="stat-value" id="totalLikes">0</span>
-                <div class="stat-label">累計評価</div>
+                <div class="stat-label">累計評価 ℹ️</div>
             </div>
-            <div class="stat-item">
+            <div class="stat-item" onclick="showStatInfo('posts')" style="cursor: pointer;">
                 <span class="stat-value" id="totalPosts">0</span>
-                <div class="stat-label">投稿数</div>
+                <div class="stat-label">投稿数 ℹ️</div>
             </div>
-            <div class="stat-item">
+            <div class="stat-item" onclick="showStatInfo('level')" style="cursor: pointer;">
                 <span class="stat-value" id="userLevel">1</span>
-                <div class="stat-label">レベル</div>
+                <div class="stat-label">レベル ℹ️</div>
             </div>
-            <div class="stat-item">
+            <div class="stat-item" onclick="showStatInfo('ranking')" style="cursor: pointer;">
                 <span class="stat-value" id="userRanking">-</span>
-                <div class="stat-label">ランキング</div>
+                <div class="stat-label">ランキング ℹ️</div>
             </div>
         </div>
 
@@ -1051,6 +1058,21 @@
                 <button class="modal-btn" onclick="updateProfile()">
                     変更を保存
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 統計情報モーダル -->
+    <div class="modal" id="statInfoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="statInfoTitle">統計情報</h3>
+                <button class="modal-close" onclick="closeStatInfoModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="statInfoContent" style="line-height: 1.8;">
+                    <!-- 統計情報の説明が表示されます -->
+                </div>
             </div>
         </div>
     </div>
@@ -1788,6 +1810,151 @@
         // プロフィール編集モーダルを閉じる
         window.closeEditProfileModal = function() {
             document.getElementById('editProfileModal').classList.remove('show');
+        };
+
+        // 統計情報モーダルを表示
+        window.showStatInfo = function(statType) {
+            const modal = document.getElementById('statInfoModal');
+            const title = document.getElementById('statInfoTitle');
+            const content = document.getElementById('statInfoContent');
+            
+            const currentRating = document.getElementById('totalLikes').textContent;
+            const currentPosts = document.getElementById('totalPosts').textContent;
+            const currentLevel = document.getElementById('userLevel').textContent;
+            const currentRanking = document.getElementById('userRanking').textContent;
+            
+            let titleText = '';
+            let contentHTML = '';
+            
+            switch(statType) {
+                case 'rating':
+                    titleText = '⭐ 累計評価';
+                    contentHTML = `
+                        <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">
+                            現在の累計評価: ${currentRating}点
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>累計評価とは？</strong><br>
+                            あなたの全回答が他のユーザーから受けた評価スコアの合計です。
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>評価の仕組み</strong><br>
+                            • 他のユーザーがあなたの回答に⭐1〜5の評価をつけます<br>
+                            • 全ての評価スコアが累計されます<br>
+                            • 例: 5人から5点、4点、3点、5点、4点 = 21点
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>ランキングへの影響</strong><br>
+                            累計評価が高いほど、ランキングが上位になります！
+                        </p>
+                        <p style="color: var(--primary); font-weight: 600;">
+                            💡 面白い回答をたくさん投稿して、高評価を集めよう！
+                        </p>
+                    `;
+                    break;
+                    
+                case 'posts':
+                    titleText = '📝 投稿数';
+                    contentHTML = `
+                        <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">
+                            現在の投稿数: ${currentPosts}回
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>投稿数とは？</strong><br>
+                            あなたがこれまでに投稿した回答の総数です。
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>投稿のメリット</strong><br>
+                            • 投稿するほどレベルが上がります<br>
+                            • 様々なお題に挑戦できます<br>
+                            • 他のユーザーと交流できます
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>会員とゲストの違い</strong><br>
+                            • 会員: 無制限に投稿可能<br>
+                            • ゲスト: 1日2回まで
+                        </p>
+                        <p style="color: var(--primary); font-weight: 600;">
+                            💡 毎日投稿してレベルアップしよう！
+                        </p>
+                    `;
+                    break;
+                    
+                case 'level':
+                    titleText = '🎖️ レベル';
+                    const nextLevel = parseInt(currentLevel) + 1;
+                    const postsForNextLevel = parseInt(currentLevel) * 5;
+                    const postsNeeded = postsForNextLevel - parseInt(currentPosts);
+                    contentHTML = `
+                        <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">
+                            現在のレベル: Lv.${currentLevel}
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>レベルとは？</strong><br>
+                            投稿数に応じて自動的に上がるランクです。
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>レベルアップの条件</strong><br>
+                            5回答ごとにレベルが1上がります。<br>
+                            <br>
+                            • Lv.1: 0〜4回答<br>
+                            • Lv.2: 5〜9回答<br>
+                            • Lv.3: 10〜14回答<br>
+                            • Lv.4: 15〜19回答<br>
+                            • ...以降も5回答ごとに+1
+                        </p>
+                        ${postsNeeded > 0 ? `
+                        <p style="background: linear-gradient(135deg, #FFF8F0 0%, #FFE5D9 100%); 
+                                   padding: 1rem; 
+                                   border-radius: 10px; 
+                                   border-left: 4px solid var(--primary);">
+                            <strong>次のレベルまで</strong><br>
+                            あと<span style="font-size: 1.3rem; font-weight: 700; color: var(--primary);"> ${postsNeeded} </span>回答でLv.${nextLevel}！
+                        </p>
+                        ` : ''}
+                        <p style="color: var(--primary); font-weight: 600; margin-top: 1rem;">
+                            💡 コツコツ投稿してレベルを上げよう！
+                        </p>
+                    `;
+                    break;
+                    
+                case 'ranking':
+                    titleText = '🏆 ランキング';
+                    contentHTML = `
+                        <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">
+                            現在のランキング: ${currentRanking}
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>ランキングとは？</strong><br>
+                            累計評価スコアを基準に、全会員の中での順位を示します。
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>順位の決まり方</strong><br>
+                            • 累計評価スコアが高い順にランキング<br>
+                            • リアルタイムで更新されます<br>
+                            • 投稿するたびに順位が変動する可能性があります
+                        </p>
+                        <p style="margin-bottom: 0.8rem;">
+                            <strong>上位を目指すには</strong><br>
+                            • 面白い回答を投稿する<br>
+                            • たくさんのお題に挑戦する<br>
+                            • 他のユーザーの高評価を集める
+                        </p>
+                        <p style="color: var(--primary); font-weight: 600;">
+                            💡 トップランカーを目指して頑張ろう！
+                        </p>
+                    `;
+                    break;
+            }
+            
+            title.textContent = titleText;
+            content.innerHTML = contentHTML;
+            modal.classList.add('show');
+        };
+
+        // 統計情報モーダルを閉じる
+        window.closeStatInfoModal = function() {
+            document.getElementById('statInfoModal').classList.remove('show');
         };
 
         // プロフィールを更新
