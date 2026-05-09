@@ -2850,8 +2850,8 @@
                     starsHtml += `<span class="star ${filled ? 'filled' : 'empty'}" 
                                        data-answer-id="${answer.id}" 
                                        data-rating="${i}" 
-                                       onclick="${isMyAnswer ? '' : 'rateAnswer(\"' + answer.id + '\", ' + i + ')'}"
-                                       ${isMyAnswer ? '' : 'onmouseover="hoverStars(\"' + answer.id + '\", ' + i + ')" onmouseout="unhoverStars(\"' + answer.id + '\")'}"
+                                       onclick="${isMyAnswer ? '' : 'rateAnswer(\\"' + answer.id + '\\", ' + i + ')'}"
+                                       ${isMyAnswer ? '' : 'onmouseover="hoverStars(\\"' + answer.id + '\\", ' + i + ')" onmouseout="unhoverStars(\\"' + answer.id + '\\")"'}
                                        style="${isMyAnswer ? 'cursor: not-allowed; opacity: 0.5;' : ''}">⭐</span>`;
                 }
                 
