@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>大喜利ひろば - ログイン版</title>
+    
+    <!-- Google AdSense 審査用コード -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3633766216426604"
+         crossorigin="anonymous"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -846,6 +851,30 @@
             background: rgba(255,255,255,0.4);
             transform: translateY(-1px);
         }
+
+        /* 広告枠スタイル */
+        .ad-container {
+            margin: 2rem 0;
+            text-align: center;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px dashed #dee2e6;
+        }
+
+        .ad-label {
+            font-size: 0.75rem;
+            color: #999;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .ad-container iframe,
+        .ad-container ins {
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
@@ -910,6 +939,17 @@
             <div class="odai-text" id="odai">読み込み中...</div>
         </div>
 
+        <!-- 広告枠1: お題と投稿フォームの間 -->
+        <div class="ad-container">
+            <div class="ad-label">スポンサーリンク</div>
+            <!-- 忍者AdMax: 審査中はここに忍者AdMaxのコードを設置 -->
+            <!-- 審査通過後はAdSenseのコードに差し替え -->
+            <div id="ad-top" style="min-height: 250px; display: flex; align-items: center; justify-content: center; color: #999;">
+                <!-- ここに忍者AdMaxまたはAdSenseのコードを設置 -->
+                広告枠（300×250）
+            </div>
+        </div>
+
         <!-- 投稿フォーム -->
         <div class="input-section">
             <div class="guest-notice" id="guestNotice" style="display: block;">
@@ -944,6 +984,15 @@
             <button class="submit-btn" onclick="submitAnswer()">
                 回答を投稿する 🎤
             </button>
+        </div>
+
+        <!-- 広告枠2: 投稿フォームと回答リストの間 -->
+        <div class="ad-container">
+            <div class="ad-label">スポンサーリンク</div>
+            <div id="ad-middle" style="min-height: 250px; display: flex; align-items: center; justify-content: center; color: #999;">
+                <!-- ここに忍者AdMaxまたはAdSenseのコードを設置 -->
+                広告枠（336×280）
+            </div>
         </div>
 
         <!-- 回答一覧 -->
