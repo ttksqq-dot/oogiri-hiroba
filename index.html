@@ -204,15 +204,61 @@
             margin-top: 0.3rem;
         }
 
-        .total-posts-stat {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%) !important;
-            border: 2px solid var(--accent);
+        /* 総投稿数セクション */
+        .total-posts-section {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
         }
 
-        .total-posts-stat:hover {
-            transform: none !important;
-            cursor: default !important;
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%) !important;
+        .total-posts-card {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 3px solid var(--accent);
+            border-radius: 15px;
+            padding: 1.2rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 200, 87, 0.3);
+            display: inline-block;
+            min-width: 250px;
+        }
+
+        .total-posts-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-posts-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .total-posts-value {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        @media (max-width: 768px) {
+            .total-posts-card {
+                padding: 1rem 1.5rem;
+                min-width: 200px;
+            }
+
+            .total-posts-icon {
+                font-size: 1.5rem;
+            }
+
+            .total-posts-label {
+                font-size: 0.8rem;
+            }
+
+            .total-posts-value {
+                font-size: 2.5rem;
+            }
         }
 
         .odai-section {
@@ -1157,32 +1203,32 @@
             ← お題一覧に戻る
         </button>
 
-        <!-- 統計セクション（総投稿数 + 会員統計） -->
-        <div class="stats-section">
-            <!-- 総投稿数 -->
-            <div class="stat-item total-posts-stat">
-                <span class="stat-value" id="totalPostsCount">0</span>
-                <div class="stat-label">総投稿数 💬</div>
+        <!-- 総投稿数（独立セクション） -->
+        <div class="total-posts-section">
+            <div class="total-posts-card">
+                <div class="total-posts-icon">💬</div>
+                <div class="total-posts-label">サイト全体の総投稿数</div>
+                <div class="total-posts-value" id="totalPostsCount">0</div>
             </div>
+        </div>
 
-            <!-- 会員統計（ログイン時のみ表示） -->
-            <div id="memberStatsContainer" style="display: none; display: flex; gap: 1rem;">
-                <div class="stat-item" onclick="showStatInfo('rating')" style="cursor: pointer;">
-                    <span class="stat-value" id="totalLikes">0</span>
-                    <div class="stat-label">累計評価 ℹ️</div>
-                </div>
-                <div class="stat-item" onclick="showStatInfo('posts')" style="cursor: pointer;">
-                    <span class="stat-value" id="totalPosts">0</span>
-                    <div class="stat-label">投稿数 ℹ️</div>
-                </div>
-                <div class="stat-item" onclick="showStatInfo('level')" style="cursor: pointer;">
-                    <span class="stat-value" id="userLevel">1</span>
-                    <div class="stat-label">レベル ℹ️</div>
-                </div>
-                <div class="stat-item" onclick="showStatInfo('ranking')" style="cursor: pointer;">
-                    <span class="stat-value" id="userRanking">-</span>
-                    <div class="stat-label">ランキング ℹ️</div>
-                </div>
+        <!-- 会員統計（ログイン時のみ表示） -->
+        <div class="stats-section" id="memberStatsContainer" style="display: none;">
+            <div class="stat-item" onclick="showStatInfo('rating')" style="cursor: pointer;">
+                <span class="stat-value" id="totalLikes">0</span>
+                <div class="stat-label">累計評価 ℹ️</div>
+            </div>
+            <div class="stat-item" onclick="showStatInfo('posts')" style="cursor: pointer;">
+                <span class="stat-value" id="totalPosts">0</span>
+                <div class="stat-label">投稿数 ℹ️</div>
+            </div>
+            <div class="stat-item" onclick="showStatInfo('level')" style="cursor: pointer;">
+                <span class="stat-value" id="userLevel">1</span>
+                <div class="stat-label">レベル ℹ️</div>
+            </div>
+            <div class="stat-item" onclick="showStatInfo('ranking')" style="cursor: pointer;">
+                <span class="stat-value" id="userRanking">-</span>
+                <div class="stat-label">ランキング ℹ️</div>
             </div>
         </div>
 
