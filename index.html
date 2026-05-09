@@ -1203,10 +1203,20 @@
         // 今日のお題を取得（日付ベース）
         function getTodaysOdaiIndex() {
             const today = new Date();
+            today.setHours(0, 0, 0, 0); // 時刻をリセット
+            
             // 2026年5月10日を基準日とする（お題リスト開始日）
             const baseDate = new Date('2026-05-10');
-            const diffTime = Math.abs(today - baseDate);
+            baseDate.setHours(0, 0, 0, 0);
+            
+            const diffTime = today - baseDate;
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            // 基準日より前の場合は最後のお題を表示
+            if (diffDays < 0) {
+                return odaiList.length - 1;
+            }
+            
             // お題リストの長さで割った余りを使う（お題をループさせる）
             return diffDays % odaiList.length;
         }
