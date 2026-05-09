@@ -204,6 +204,17 @@
             margin-top: 0.3rem;
         }
 
+        .total-posts-stat {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%) !important;
+            border: 2px solid var(--accent);
+        }
+
+        .total-posts-stat:hover {
+            transform: none !important;
+            cursor: default !important;
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%) !important;
+        }
+
         .odai-section {
             background: var(--card-bg);
             border-radius: 20px;
@@ -1083,57 +1094,6 @@
                 gap: 1rem;
             }
         }
-
-        /* 総投稿数バナー */
-        .total-posts-banner {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-            border: 2px solid var(--accent);
-            border-radius: 12px;
-            padding: 0.8rem 1.2rem;
-            margin: 1rem 0;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(255, 200, 87, 0.2);
-            display: inline-block;
-            min-width: 200px;
-        }
-
-        .total-posts-banner .banner-icon {
-            font-size: 1.3rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .total-posts-banner .banner-text {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            margin-bottom: 0.2rem;
-        }
-
-        .total-posts-banner .banner-count {
-            font-family: 'Zen Maru Gothic', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--primary);
-            line-height: 1.2;
-        }
-
-        @media (max-width: 768px) {
-            .total-posts-banner {
-                padding: 0.6rem 1rem;
-                min-width: 180px;
-            }
-
-            .total-posts-banner .banner-icon {
-                font-size: 1.1rem;
-            }
-
-            .total-posts-banner .banner-count {
-                font-size: 1.3rem;
-            }
-            
-            .total-posts-banner .banner-text {
-                font-size: 0.7rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -1197,31 +1157,32 @@
             ← お題一覧に戻る
         </button>
 
-        <!-- 総投稿数バナー -->
-        <div class="total-posts-banner">
-            <div class="banner-icon">💬</div>
-            <div class="banner-text">サイト全体の総投稿数</div>
-            <div class="banner-count" id="totalPostsCount">0</div>
-            <div class="banner-text">件の回答</div>
-        </div>
+        <!-- 統計セクション（総投稿数 + 会員統計） -->
+        <div class="stats-section">
+            <!-- 総投稿数 -->
+            <div class="stat-item total-posts-stat">
+                <span class="stat-value" id="totalPostsCount">0</span>
+                <div class="stat-label">総投稿数 💬</div>
+            </div>
 
-        <!-- 会員統計 -->
-        <div class="stats-section" id="statsSection" style="display: none;">
-            <div class="stat-item" onclick="showStatInfo('rating')" style="cursor: pointer;">
-                <span class="stat-value" id="totalLikes">0</span>
-                <div class="stat-label">累計評価 ℹ️</div>
-            </div>
-            <div class="stat-item" onclick="showStatInfo('posts')" style="cursor: pointer;">
-                <span class="stat-value" id="totalPosts">0</span>
-                <div class="stat-label">投稿数 ℹ️</div>
-            </div>
-            <div class="stat-item" onclick="showStatInfo('level')" style="cursor: pointer;">
-                <span class="stat-value" id="userLevel">1</span>
-                <div class="stat-label">レベル ℹ️</div>
-            </div>
-            <div class="stat-item" onclick="showStatInfo('ranking')" style="cursor: pointer;">
-                <span class="stat-value" id="userRanking">-</span>
-                <div class="stat-label">ランキング ℹ️</div>
+            <!-- 会員統計（ログイン時のみ表示） -->
+            <div id="memberStatsContainer" style="display: none; display: flex; gap: 1rem;">
+                <div class="stat-item" onclick="showStatInfo('rating')" style="cursor: pointer;">
+                    <span class="stat-value" id="totalLikes">0</span>
+                    <div class="stat-label">累計評価 ℹ️</div>
+                </div>
+                <div class="stat-item" onclick="showStatInfo('posts')" style="cursor: pointer;">
+                    <span class="stat-value" id="totalPosts">0</span>
+                    <div class="stat-label">投稿数 ℹ️</div>
+                </div>
+                <div class="stat-item" onclick="showStatInfo('level')" style="cursor: pointer;">
+                    <span class="stat-value" id="userLevel">1</span>
+                    <div class="stat-label">レベル ℹ️</div>
+                </div>
+                <div class="stat-item" onclick="showStatInfo('ranking')" style="cursor: pointer;">
+                    <span class="stat-value" id="userRanking">-</span>
+                    <div class="stat-label">ランキング ℹ️</div>
+                </div>
             </div>
         </div>
 
@@ -2502,7 +2463,7 @@
             window.currentUser = user;
             const userInfo = document.getElementById('userInfo');
             const guestNotice = document.getElementById('guestNotice');
-            const statsSection = document.getElementById('statsSection');
+            const memberStatsContainer = document.getElementById('memberStatsContainer');
             const nameInput = document.getElementById('nameInput');
             const nameLabel = document.getElementById('nameLabel');
 
@@ -2545,7 +2506,7 @@
                     </button>
                 `;
                 guestNotice.style.display = 'none';
-                statsSection.style.display = 'block';
+                memberStatsContainer.style.display = 'flex';
                 nameInput.value = displayName;
                 nameInput.disabled = true;
                 nameLabel.style.display = 'none';
@@ -2563,7 +2524,7 @@
                     </button>
                 `;
                 guestNotice.style.display = 'block';
-                statsSection.style.display = 'none';
+                memberStatsContainer.style.display = 'none';
                 nameInput.disabled = false;
                 nameInput.value = '';
                 nameLabel.style.display = 'block';
