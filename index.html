@@ -204,63 +204,6 @@
             margin-top: 0.3rem;
         }
 
-        /* 総投稿数セクション */
-        .total-posts-section {
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: center;
-        }
-
-        .total-posts-card {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-            border: 3px solid var(--accent);
-            border-radius: 15px;
-            padding: 1.2rem 2rem;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(255, 200, 87, 0.3);
-            display: inline-block;
-            min-width: 250px;
-        }
-
-        .total-posts-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .total-posts-label {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .total-posts-value {
-            font-family: 'Zen Maru Gothic', sans-serif;
-            font-size: 3rem;
-            font-weight: 900;
-            color: var(--primary);
-            line-height: 1;
-        }
-
-        @media (max-width: 768px) {
-            .total-posts-card {
-                padding: 1rem 1.5rem;
-                min-width: 200px;
-            }
-
-            .total-posts-icon {
-                font-size: 1.5rem;
-            }
-
-            .total-posts-label {
-                font-size: 0.8rem;
-            }
-
-            .total-posts-value {
-                font-size: 2.5rem;
-            }
-        }
-
         .odai-section {
             background: var(--card-bg);
             border-radius: 20px;
@@ -917,6 +860,31 @@
             transform: translateY(-1px);
         }
 
+        /* ヘッダー内の総投稿数 */
+        .header-total-posts {
+            background: rgba(255,255,255,0.95);
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            border: 2px solid rgba(255,255,255,0.5);
+            margin-left: 1rem;
+        }
+
+        .header-total-posts-value {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .header-total-posts-label {
+            font-size: 0.8rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
         /* 広告枠スタイル */
         .ad-container {
             margin: 2rem 0;
@@ -1154,6 +1122,10 @@
                 <button class="odai-list-btn" onclick="goToToday()">🏠 今日のお題</button>
                 <button class="odai-list-btn" onclick="showOdaiList()">📝 お題一覧</button>
                 <button class="odai-list-btn" onclick="showRankingPage()">🏆 ランキング</button>
+                <div class="header-total-posts">
+                    <span class="header-total-posts-value" id="headerTotalPostsCount">0</span>
+                    <span class="header-total-posts-label">件の回答</span>
+                </div>
             </div>
             <div class="user-info" id="userInfo">
                 <button class="login-btn" onclick="loginWithGoogle()">
@@ -1202,15 +1174,6 @@
         <button class="back-to-list-btn" id="backToListBtn" onclick="showOdaiList()" style="display: none;">
             ← お題一覧に戻る
         </button>
-
-        <!-- 総投稿数（独立セクション） -->
-        <div class="total-posts-section">
-            <div class="total-posts-card">
-                <div class="total-posts-icon">💬</div>
-                <div class="total-posts-label">サイト全体の総投稿数</div>
-                <div class="total-posts-value" id="totalPostsCount">0</div>
-            </div>
-        </div>
 
         <!-- 会員統計（ログイン時のみ表示） -->
         <div class="stats-section" id="memberStatsContainer" style="display: none;">
@@ -2800,10 +2763,17 @@
                 const querySnapshot = await getDocs(q);
                 const totalCount = querySnapshot.size;
                 
-                document.getElementById('totalPostsCount').textContent = totalCount.toLocaleString();
+                // ヘッダーの総投稿数を更新
+                const headerElement = document.getElementById('headerTotalPostsCount');
+                if (headerElement) {
+                    headerElement.textContent = totalCount.toLocaleString();
+                }
             } catch (error) {
                 console.error('総投稿数読み込みエラー:', error);
-                document.getElementById('totalPostsCount').textContent = '-';
+                const headerElement = document.getElementById('headerTotalPostsCount');
+                if (headerElement) {
+                    headerElement.textContent = '-';
+                }
             }
         }
 
