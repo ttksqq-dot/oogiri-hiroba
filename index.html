@@ -628,6 +628,128 @@
                 gap: 0.5rem;
             }
         }
+
+        /* お題一覧ページ用のスタイル */
+        .odai-list-container {
+            display: none;
+        }
+
+        .odai-list-container.show {
+            display: block;
+        }
+
+        .main-container {
+            display: block;
+        }
+
+        .main-container.hide {
+            display: none;
+        }
+
+        .odai-list-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .odai-list-header h2 {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .odai-list-header p {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .odai-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .odai-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 3px solid var(--accent);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        .odai-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
+            border-color: var(--primary);
+        }
+
+        .odai-card-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .odai-card-text {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .odai-card-count {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .back-to-list-btn {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-to-list-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(247, 147, 30, 0.3);
+        }
+
+        .odai-list-btn {
+            background: rgba(255,255,255,0.3);
+            border: 1px solid white;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+
+        .odai-list-btn:hover {
+            background: rgba(255,255,255,0.4);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -646,7 +768,26 @@
         </div>
     </div>
 
+    <!-- お題一覧ページ -->
+    <div class="odai-list-container" id="odaiListContainer">
+        <div class="container">
+            <div class="odai-list-header">
+                <h2>📝 お題一覧</h2>
+                <p>好きなお題を選んで、みんなの回答を見たり、自分の回答を投稿しよう！</p>
+            </div>
+            <div class="odai-grid" id="odaiGrid">
+                <!-- お題カードがJavaScriptで動的に生成されます -->
+            </div>
+        </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="main-container" id="mainContainer">
     <div class="container">
+        <button class="back-to-list-btn" id="backToListBtn" onclick="showOdaiList()" style="display: none;">
+            ← お題一覧に戻る
+        </button>
+
         <!-- 会員統計 -->
         <div class="stats-section" id="statsSection" style="display: none;">
             <div class="stat-item">
@@ -722,6 +863,8 @@
             </div>
         </div>
     </div>
+    </div>
+    <!-- /main-container -->
 
     <!-- ニックネーム設定モーダル -->
     <div class="modal" id="nicknameModal">
@@ -874,9 +1017,101 @@
             '「これは便利すぎる！」と思った未来の道具とは？'
         ];
 
-        // ランダムにお題を選択
-        const randomOdai = odaiList[Math.floor(Math.random() * odaiList.length)];
-        document.getElementById('odai').textContent = randomOdai;
+        // 現在選択されているお題のインデックス
+        let currentOdaiIndex = null;
+
+        // URLパラメータから お題インデックスを取得
+        function getOdaiIndexFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const odaiParam = params.get('odai');
+            return odaiParam !== null ? parseInt(odaiParam) : null;
+        }
+
+        // URLパラメータを更新
+        function updateURL(odaiIndex) {
+            const url = new URL(window.location);
+            if (odaiIndex !== null) {
+                url.searchParams.set('odai', odaiIndex);
+            } else {
+                url.searchParams.delete('odai');
+            }
+            window.history.pushState({}, '', url);
+        }
+
+        // お題一覧ページを表示
+        window.showOdaiList = function() {
+            currentOdaiIndex = null;
+            updateURL(null);
+            document.getElementById('odaiListContainer').classList.add('show');
+            document.getElementById('mainContainer').classList.add('hide');
+            document.getElementById('backToListBtn').style.display = 'none';
+            renderOdaiList();
+        };
+
+        // お題を選択
+        window.selectOdai = function(index) {
+            currentOdaiIndex = index;
+            updateURL(index);
+            document.getElementById('odaiListContainer').classList.remove('show');
+            document.getElementById('mainContainer').classList.remove('hide');
+            document.getElementById('backToListBtn').style.display = 'inline-flex';
+            document.getElementById('odai').textContent = odaiList[index];
+            loadAnswers();
+        };
+
+        // お題一覧をレンダリング
+        function renderOdaiList() {
+            const grid = document.getElementById('odaiGrid');
+            grid.innerHTML = odaiList.map((odai, index) => `
+                <div class="odai-card" onclick="selectOdai(${index})">
+                    <div class="odai-card-number">お題 ${index + 1}</div>
+                    <div class="odai-card-text">${odai}</div>
+                    <div class="odai-card-count" id="odaiCount${index}">読み込み中...</div>
+                </div>
+            `).join('');
+            
+            // 各お題の回答数をカウント
+            countAnswersForEachOdai();
+        }
+
+        // 各お題の回答数をカウント
+        async function countAnswersForEachOdai() {
+            try {
+                const q = query(collection(db, 'answers'));
+                const querySnapshot = await getDocs(q);
+                
+                const counts = new Array(odaiList.length).fill(0);
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const odaiText = data.odai;
+                    const index = odaiList.indexOf(odaiText);
+                    if (index !== -1) {
+                        counts[index]++;
+                    }
+                });
+                
+                odaiList.forEach((odai, index) => {
+                    const countEl = document.getElementById(`odaiCount${index}`);
+                    if (countEl) {
+                        countEl.textContent = `💬 ${counts[index]}件の回答`;
+                    }
+                });
+            } catch (error) {
+                console.error('回答数カウントエラー:', error);
+            }
+        }
+
+        // 初期化：URLパラメータをチェック
+        const initialOdaiIndex = getOdaiIndexFromURL();
+        if (initialOdaiIndex !== null && initialOdaiIndex >= 0 && initialOdaiIndex < odaiList.length) {
+            // 特定のお題を表示
+            currentOdaiIndex = initialOdaiIndex;
+            document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
+            document.getElementById('backToListBtn').style.display = 'inline-flex';
+        } else {
+            // お題一覧を表示
+            showOdaiList();
+        }
 
         // アイコン選択用のグローバル変数
         let selectedAvatar = '👤'; // デフォルトアイコン
@@ -1255,6 +1490,9 @@
 
                 // ログイン済み
                 userInfo.innerHTML = `
+                    <button class="odai-list-btn" onclick="showOdaiList()">
+                        📝 お題一覧
+                    </button>
                     <div class="user-profile">
                         ${avatarHTML}
                         <span class="user-name">
@@ -1281,6 +1519,9 @@
             } else {
                 // ゲストモード
                 userInfo.innerHTML = `
+                    <button class="odai-list-btn" onclick="showOdaiList()">
+                        📝 お題一覧
+                    </button>
                     <button class="login-btn" onclick="loginWithGoogle()">
                         Googleでログイン
                     </button>
@@ -1432,13 +1673,23 @@
 
         // 回答を読み込み
         async function loadAnswers() {
+            // お題一覧ページでは回答を読み込まない
+            if (currentOdaiIndex === null) {
+                return;
+            }
+
             try {
+                const currentOdai = odaiList[currentOdaiIndex];
                 const q = query(collection(db, 'answers'), orderBy('createdAt', 'desc'));
                 const querySnapshot = await getDocs(q);
                 
                 window.answers = [];
                 querySnapshot.forEach((doc) => {
-                    window.answers.push({ id: doc.id, ...doc.data() });
+                    const data = doc.data();
+                    // 現在のお題の回答のみを追加
+                    if (data.odai === currentOdai) {
+                        window.answers.push({ id: doc.id, ...data });
+                    }
                 });
 
                 displayAnswers();
