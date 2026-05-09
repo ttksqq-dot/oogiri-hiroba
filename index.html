@@ -368,6 +368,15 @@
             color: var(--text);
         }
 
+        .answer-date {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
         .like-btn {
             background: white;
             border: 2px solid #E0E0E0;
@@ -1794,9 +1803,25 @@
                 return;
             }
 
-            answersList.innerHTML = window.answers.map(answer => {
+            // いいね数が多い順にソート
+            const sortedAnswers = [...window.answers].sort((a, b) => b.likes - a.likes);
+
+            answersList.innerHTML = sortedAnswers.map(answer => {
                 const isLiked = likedAnswers.includes(answer.id);
                 const memberBadge = !answer.isGuest ? '<span class="member-badge">会員</span>' : '';
+                
+                // 日付をフォーマット
+                let dateStr = '';
+                if (answer.createdAt) {
+                    const date = answer.createdAt.toDate ? answer.createdAt.toDate() : new Date(answer.createdAt);
+                    const year = date.getFullYear();
+                    const month = date.getMonth() + 1;
+                    const day = date.getDate();
+                    const hours = date.getHours();
+                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                    dateStr = `${year}/${month}/${day} ${hours}:${minutes}`;
+                }
+                
                 return `
                     <div class="answer-card">
                         <div class="answer-header">
@@ -1809,6 +1834,7 @@
                             </button>
                         </div>
                         <div class="answer-text">${escapeHtml(answer.text)}</div>
+                        ${dateStr ? `<div class="answer-date">📅 ${dateStr}</div>` : ''}
                     </div>
                 `;
             }).join('');
