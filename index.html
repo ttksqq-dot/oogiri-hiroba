@@ -840,10 +840,75 @@
             border-bottom: 3px solid var(--accent);
         }
 
+        .odai-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .odai-list-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            border: 2px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .odai-list-item:hover {
+            border-color: var(--accent);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        .odai-list-badge {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .odai-list-content {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .odai-list-text {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .odai-list-count {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .odai-list-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        /* 以下は使わないので削除またはコメントアウト */
         .odai-category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
+            display: none;
         }
 
         .odai-card {
@@ -2523,12 +2588,14 @@
                 return `
                     <div class="odai-category">
                         <h3 class="odai-category-title">${category.name}</h3>
-                        <div class="odai-category-grid">
+                        <div class="odai-list">
                             ${items.map(({ odai, index }) => `
-                                <div class="odai-card" onclick="selectOdai(${index})">
-                                    <div class="odai-card-number">お題 ${index + 1}</div>
-                                    <div class="odai-card-text">${odai}</div>
-                                    <div class="odai-card-count" id="odaiCount${index}">読み込み中...</div>
+                                <div class="odai-list-item" onclick="selectOdai(${index})">
+                                    <div class="odai-list-badge">お題</div>
+                                    <div class="odai-list-content">
+                                        <div class="odai-list-text">${odai}</div>
+                                        <div class="odai-list-count" id="odaiCount${index}">読み込み中...</div>
+                                    </div>
                                 </div>
                             `).join('')}
                         </div>
