@@ -1562,6 +1562,9 @@
     <!-- お題一覧ページ -->
     <div class="odai-list-container" id="odaiListContainer">
         <div class="container">
+            <button class="back-to-main-btn" onclick="goToToday()">
+                ← トップページに戻る
+            </button>
             <div class="odai-list-header">
                 <h2>📝 お題一覧</h2>
                 <p>好きなお題を選んで、みんなの回答を見たり、自分の回答を投稿しよう！</p>
@@ -1676,10 +1679,6 @@
     <!-- メインコンテンツ -->
     <div class="main-container" id="mainContainer">
     <div class="container">
-        <button class="back-to-list-btn" id="backToListBtn" onclick="showOdaiList()" style="display: none;">
-            ← お題一覧に戻る
-        </button>
-
         <!-- 会員統計（ログイン時のみ表示） -->
         <div class="stats-section" id="memberStatsContainer" style="display: none;">
             <div class="stat-item" onclick="showStatInfo('rating')" style="cursor: pointer;">
@@ -2403,7 +2402,6 @@
             document.getElementById('rankingContainer').classList.remove('show');
             document.getElementById('profileContainer').classList.remove('show');
             document.getElementById('mainContainer').classList.add('hide');
-            document.getElementById('backToListBtn').style.display = 'none';
             renderOdaiList();
             
             // URL履歴に追加
@@ -2427,7 +2425,6 @@
             document.getElementById('rankingContainer').classList.remove('show');
             document.getElementById('profileContainer').classList.remove('show');
             document.getElementById('mainContainer').classList.remove('hide');
-            document.getElementById('backToListBtn').style.display = 'inline-flex';
             document.getElementById('odai').textContent = odaiList[todayIndex];
             
             // 回答を読み込み
@@ -2571,7 +2568,6 @@
             document.getElementById('odaiListContainer').classList.remove('show');
             document.getElementById('rankingContainer').classList.remove('show');
             document.getElementById('mainContainer').classList.remove('hide');
-            document.getElementById('backToListBtn').style.display = 'inline-flex';
             document.getElementById('odai').textContent = odaiList[index];
             loadAnswers();
         };
@@ -2738,13 +2734,11 @@
             // URLパラメータで特定のお題を表示
             currentOdaiIndex = initialOdaiIndex;
             document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
-            document.getElementById('backToListBtn').style.display = 'inline-flex';
         } else {
             // 今日のお題を表示
             currentOdaiIndex = getTodaysOdaiIndex();
             document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
             updateURL(currentOdaiIndex);
-            document.getElementById('backToListBtn').style.display = 'inline-flex';
         }
 
         // アイコン選択用のグローバル変数
