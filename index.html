@@ -1672,6 +1672,196 @@
             .profile-sort-buttons {
                 flex-direction: column;
             }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .footer-separator {
+                display: none;
+            }
+        }
+
+        /* フッター */
+        .footer {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .footer-separator {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-copyright {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* 規約モーダル専用スタイル */
+        .terms-modal-content {
+            max-width: 800px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terms-modal-body {
+            overflow-y: auto;
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .terms-section {
+            margin-bottom: 2rem;
+        }
+
+        .terms-section h3 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .terms-section p {
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .terms-section ol,
+        .terms-section ul {
+            line-height: 1.8;
+            padding-left: 1.5rem;
+        }
+
+        .terms-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .terms-updated {
+            text-align: right;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 使い方ガイドのステップ */
+        .guide-step {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .guide-step-number {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .guide-step-content {
+            flex: 1;
+            padding-top: 0.5rem;
+        }
+
+        .guide-step-content strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        /* 比較表 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: center;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-weight: bold;
+        }
+
+        .comparison-table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .comparison-table tbody tr:hover {
+            background: #fff8f0;
+        }
+
+        /* FAQ */
+        .faq-item {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .faq-question {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-answer {
+            color: var(--text);
+            line-height: 1.8;
+        }
+
+        /* お問い合わせ情報 */
+        .contact-info {
+            background: #fff8f0;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
         }
     </style>
 </head>
@@ -4536,6 +4726,327 @@
             }
             // それ以外は通常の初期化処理が実行される
         });
+    </script>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#" onclick="showAboutModal(); return false;">このサイトについて</a>
+                <span class="footer-separator">|</span>
+                <a href="#" onclick="showTermsModal(); return false;">利用規約</a>
+            </div>
+            <div class="footer-copyright">
+                © 2026 大喜利ひろば All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- このサイトについてモーダル -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-content terms-modal-content">
+            <div class="modal-header">
+                <h2>📘 このサイトについて</h2>
+                <span class="close-btn" onclick="closeAboutModal()">&times;</span>
+            </div>
+            <div class="modal-body terms-modal-body">
+                <section class="terms-section">
+                    <h3>🎭 大喜利ひろばとは</h3>
+                    <p>
+                        大喜利ひろばは、毎日更新される「お題」に対して面白い回答を投稿し、
+                        みんなで楽しむ大喜利コミュニティサイトです。
+                    </p>
+                    <p>
+                        初心者からベテランまで、誰でも気軽に参加できる場所を目指しています。
+                        あなたのユーモアセンスで、みんなを笑顔にしましょう！
+                    </p>
+                </section>
+
+                <section class="terms-section">
+                    <h3>✨ サイトの特徴</h3>
+                    <ul>
+                        <li><strong>ゲストでも投稿OK</strong> - 会員登録なしでも1日3回まで投稿できます</li>
+                        <li><strong>評価システム</strong> - 5段階評価で面白い回答を応援できます</li>
+                        <li><strong>ランキング機能</strong> - 累計評価スコアで上位を目指せます</li>
+                        <li><strong>レベルアップ</strong> - 投稿や評価を集めてレベルが上がります</li>
+                        <li><strong>プロフィール</strong> - 自己紹介やSNSリンクを設定できます</li>
+                    </ul>
+                </section>
+
+                <section class="terms-section">
+                    <h3>🎯 使い方ガイド</h3>
+                    <div class="guide-step">
+                        <div class="guide-step-number">1</div>
+                        <div class="guide-step-content">
+                            <strong>お題を読む</strong><br>
+                            トップページに表示される「今日のお題」をチェック
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">2</div>
+                        <div class="guide-step-content">
+                            <strong>回答を投稿</strong><br>
+                            面白い回答を考えて投稿フォームから送信
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">3</div>
+                        <div class="guide-step-content">
+                            <strong>他の回答を評価</strong><br>
+                            面白い回答には⭐1〜5で評価をつけよう
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">4</div>
+                        <div class="guide-step-content">
+                            <strong>ランキングをチェック</strong><br>
+                            自分の順位を確認して上位を目指そう
+                        </div>
+                    </div>
+                </section>
+
+                <section class="terms-section">
+                    <h3>👥 ゲストと会員の違い</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>機能</th>
+                                <th>ゲスト</th>
+                                <th>会員</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>投稿</td>
+                                <td>1日3回まで</td>
+                                <td>無制限</td>
+                            </tr>
+                            <tr>
+                                <td>評価</td>
+                                <td>⭐のみ</td>
+                                <td>⭐1〜5段階</td>
+                            </tr>
+                            <tr>
+                                <td>ランキング</td>
+                                <td>×</td>
+                                <td>○</td>
+                            </tr>
+                            <tr>
+                                <td>プロフィール</td>
+                                <td>×</td>
+                                <td>○</td>
+                            </tr>
+                            <tr>
+                                <td>レベル</td>
+                                <td>×</td>
+                                <td>○</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="terms-section">
+                    <h3>❓ よくある質問</h3>
+                    <div class="faq-item">
+                        <div class="faq-question">Q. 会員登録は無料ですか？</div>
+                        <div class="faq-answer">A. はい、完全無料です。Googleアカウントまたはメールアドレスでご登録いただけます。</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Q. ニックネームは変更できますか？</div>
+                        <div class="faq-answer">A. はい、プロフィールページから30日に1回変更できます。</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Q. 不適切な投稿を見つけたら？</div>
+                        <div class="faq-answer">A. お手数ですが、下記お問い合わせ先までご連絡ください。</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Q. レベルはどうやって上がりますか？</div>
+                        <div class="faq-answer">A. 投稿数と累計評価スコアに応じて自動的にレベルアップします。</div>
+                    </div>
+                </section>
+
+                <section class="terms-section">
+                    <h3>📮 お問い合わせ</h3>
+                    <p>
+                        ご質問、ご要望、不具合報告などは、以下までお気軽にお問い合わせください。
+                    </p>
+                    <p class="contact-info">
+                        <strong>メール:</strong> contact@oogiri-hiroba.com（仮）<br>
+                        <strong>X (Twitter):</strong> @oogiri_hiroba（仮）
+                    </p>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- 利用規約モーダル -->
+    <div class="modal" id="termsModal">
+        <div class="modal-content terms-modal-content">
+            <div class="modal-header">
+                <h2>📋 利用規約</h2>
+                <span class="close-btn" onclick="closeTermsModal()">&times;</span>
+            </div>
+            <div class="modal-body terms-modal-body">
+                <p class="terms-updated">最終更新日: 2026年5月10日</p>
+                
+                <section class="terms-section">
+                    <h3>第1条（適用）</h3>
+                    <p>
+                        本利用規約（以下「本規約」といいます）は、大喜利ひろば（以下「本サービス」といいます）の
+                        利用に関する条件を定めるものです。ユーザーの皆様には、本規約に従って本サービスをご利用いただきます。
+                    </p>
+                </section>
+
+                <section class="terms-section">
+                    <h3>第2条（利用登録）</h3>
+                    <ol>
+                        <li>本サービスでは、ゲストとして利用登録なしで投稿することができます。</li>
+                        <li>会員登録を行う場合、登録希望者は本規約に同意の上、所定の方法で登録を行うものとします。</li>
+                        <li>登録希望者は、真実かつ正確な情報を提供する必要があります。</li>
+                        <li>1人のユーザーが複数のアカウントを作成することは禁止されています。</li>
+                    </ol>
+                </section>
+
+                <section class="terms-section">
+                    <h3>第3条（禁止事項）</h3>
+                    <p>ユーザーは、本サービスの利用にあたり、以下の行為をしてはなりません。</p>
+                    <ol>
+                        <li>法令または公序良俗に違反する行為</li>
+                        <li>犯罪行為に関連する行為</li>
+                        <li>他のユーザーまたは第三者に対する誹謗中傷、嫌がらせ行為</li>
+                        <li>差別的表現、性的表現、暴力的表現を含む投稿</li>
+                        <li>著作権、商標権、肖像権など他者の知的財産権を侵害する行為</li>
+                        <li>スパム行為、宣伝目的の投稿</li>
+                        <li>本サービスの運営を妨害する行為</li>
+                        <li>不正アクセス、ウイルスの頒布など、技術的な攻撃行為</li>
+                        <li>複数アカウントの作成、自作自演行為</li>
+                        <li>その他、運営者が不適切と判断する行為</li>
+                    </ol>
+                </section>
+
+                <section class="terms-section">
+                    <h3>第4条（投稿内容の取扱い）</h3>
+                    <ol>
+                        <li>ユーザーが本サービスに投稿したコンテンツの著作権は、投稿者に帰属します。</li>
+                        <li>ユーザーは、投稿により運営者に対して、投稿コンテンツを本サービス内で使用する
+                            非独占的な権利を許諾するものとします。</li>
+                        <li>運営者は、禁止事項に該当すると判断した投稿を、事前の通知なく削除することができます。</li>
+                        <li>投稿内容について第三者との間で紛争が生じた場合、ユーザーの責任と費用で解決するものとします。</li>
+                    </ol>
+                </section>
+
+                <section class="terms-section">
+                    <h3>第5条（アカウントの停止・削除）</h3>
+                    <ol>
+                        <li>運営者は、ユーザーが以下のいずれかに該当すると判断した場合、
+                            事前の通知なくアカウントの停止または削除を行うことができます。
+                            <ul>
+                                <li>本規約に違反した場合</li>
+                                <li>登録情報に虚偽があった場合</li>
+                                <li>長期間（1年以上）利用がない場合</li>
+                                <li>その他、運営者が不適切と判断した場合</li>
+                            </ul>
+                        </li>
+                        <li>アカウント停止・削除により生じた損害について、運営者は一切の責任を負いません。</li>
+                    </ol>
+                </section>
+
+                <section class="terms-section">
+                    <h3>第6条（免責事項）</h3>
+                    <ol>
+                        <li>本サービスは現状有姿で提供され、運営者は完全性、正確性、有用性について
+                            いかなる保証も行いません。</li>
+                        <li>本サービスの利用により生じた損害について、運営者は一切の責任を負いません。</li>
+                        <li>ユーザー間のトラブルについて、運営者は一切の責任を負いません。</li>
+                        <li>システム障害、メンテナンス等により本サービスが利用できない場合があります。</li>
+                    </ol>
+                </section>
+
+                <section class="terms-section">
+                    <h3>第7条（個人情報の取扱い）</h3>
+                    <ol>
+                        <li>本サービスでは、Google Firebase Authentication を使用してユーザー認証を行います。</li>
+                        <li>収集する情報：
+                            <ul>
+                                <li>Googleアカウント登録の場合: メールアドレス、表示名、プロフィール画像</li>
+                                <li>メールアドレス登録の場合: メールアドレス、ニックネーム</li>
+                                <li>投稿情報: 回答内容、投稿日時</li>
+                                <li>利用情報: 評価履歴、投稿回数</li>
+                            </ul>
+                        </li>
+                        <li>個人情報は、サービス提供、改善、お問い合わせ対応のために使用します。</li>
+                        <li>法令に基づく開示請求がある場合を除き、第三者に提供することはありません。</li>
+                    </ol>
+                </section>
+
+                <section class="terms-section">
+                    <h3>第8条（サービスの変更・終了）</h3>
+                    <ol>
+                        <li>運営者は、事前の通知なく本サービスの内容を変更または終了することができます。</li>
+                        <li>サービス終了の際は、可能な限り事前に告知を行います。</li>
+                        <li>サービスの変更・終了により生じた損害について、運営者は一切の責任を負いません。</li>
+                    </ol>
+                </section>
+
+                <section class="terms-section">
+                    <h3>第9条（規約の変更）</h3>
+                    <ol>
+                        <li>運営者は、必要に応じて本規約を変更することができます。</li>
+                        <li>変更後の規約は、本サービス上に掲示した時点で効力を生じます。</li>
+                        <li>規約変更後も本サービスを継続利用する場合、変更に同意したものとみなします。</li>
+                    </ol>
+                </section>
+
+                <section class="terms-section">
+                    <h3>第10条（準拠法・管轄裁判所）</h3>
+                    <ol>
+                        <li>本規約の解釈にあたっては、日本法を準拠法とします。</li>
+                        <li>本サービスに関して紛争が生じた場合、運営者の所在地を管轄する裁判所を
+                            専属的合意管轄裁判所とします。</li>
+                    </ol>
+                </section>
+
+                <section class="terms-section">
+                    <h3>お問い合わせ</h3>
+                    <p>
+                        本規約に関するお問い合わせは、以下までご連絡ください。<br>
+                        <strong>メール:</strong> contact@oogiri-hiroba.com（仮）
+                    </p>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // このサイトについてモーダル
+        function showAboutModal() {
+            document.getElementById('aboutModal').style.display = 'flex';
+        }
+
+        function closeAboutModal() {
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+
+        // 利用規約モーダル
+        function showTermsModal() {
+            document.getElementById('termsModal').style.display = 'flex';
+        }
+
+        function closeTermsModal() {
+            document.getElementById('termsModal').style.display = 'none';
+        }
+
+        // モーダル外クリックで閉じる
+        window.onclick = function(event) {
+            const aboutModal = document.getElementById('aboutModal');
+            const termsModal = document.getElementById('termsModal');
+            if (event.target === aboutModal) {
+                closeAboutModal();
+            }
+            if (event.target === termsModal) {
+                closeTermsModal();
+            }
+        }
     </script>
 </body>
 </html>
