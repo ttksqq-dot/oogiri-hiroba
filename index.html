@@ -4136,9 +4136,25 @@
                 const q = query(collection(db, 'answers'), orderBy('createdAt', 'desc'));
                 const querySnapshot = await getDocs(q);
                 
+                // お題の表示開始日を取得（そのお題が初めて表示された日）
+                const baseDate = new Date('2026-05-10');
+                baseDate.setHours(0, 0, 0, 0);
+                const odaiStartDate = new Date(baseDate);
+                odaiStartDate.setDate(baseDate.getDate() + currentOdaiIndex);
+                odaiStartDate.setHours(0, 0, 0, 0);
+                
                 window.answers = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
+                    
+                    // 回答の投稿日時を取得
+                    const answerDate = data.createdAt ? data.createdAt.toDate() : new Date(0);
+                    
+                    // お題の表示開始日より前の回答は除外
+                    if (answerDate < odaiStartDate) {
+                        return; // この回答はスキップ
+                    }
+                    
                     // odaiIdがあれば優先的に使用、なければodaiテキストで判定（後方互換性）
                     if (data.odaiId) {
                         // 新しいシステム: odaiIdで判定
