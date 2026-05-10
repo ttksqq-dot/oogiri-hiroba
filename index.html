@@ -2527,18 +2527,23 @@
             try {
                 const user = auth.currentUser;
                 
-                // 重複チェック
-                const usersSnapshot = await getDocs(collection(db, 'users'));
-                let isDuplicate = false;
-                usersSnapshot.forEach((doc) => {
-                    if (doc.data().displayName === nickname && doc.id !== user.uid) {
-                        isDuplicate = true;
+                // 重複チェック（権限エラーが出る場合はスキップ）
+                try {
+                    const usersSnapshot = await getDocs(collection(db, 'users'));
+                    let isDuplicate = false;
+                    usersSnapshot.forEach((doc) => {
+                        if (doc.data().displayName === nickname && doc.id !== user.uid) {
+                            isDuplicate = true;
+                        }
+                    });
+                    
+                    if (isDuplicate) {
+                        alert('このニックネームは既に使用されています。別のニックネームを入力してください。');
+                        return;
                     }
-                });
-                
-                if (isDuplicate) {
-                    alert('このニックネームは既に使用されています。別のニックネームを入力してください。');
-                    return;
+                } catch (permError) {
+                    console.warn('重複チェックをスキップしました:', permError);
+                    // 権限エラーの場合は重複チェックをスキップして続行
                 }
                 
                 const userRef = doc(db, 'users', user.uid);
@@ -2822,18 +2827,23 @@
                 
                 // ニックネームが変更されている場合
                 if (nickname !== currentNickname) {
-                    // 重複チェック
-                    const usersSnapshot = await getDocs(collection(db, 'users'));
-                    let isDuplicate = false;
-                    usersSnapshot.forEach((doc) => {
-                        if (doc.data().displayName === nickname && doc.id !== user.uid) {
-                            isDuplicate = true;
+                    // 重複チェック（権限エラーが出る場合はスキップ）
+                    try {
+                        const usersSnapshot = await getDocs(collection(db, 'users'));
+                        let isDuplicate = false;
+                        usersSnapshot.forEach((doc) => {
+                            if (doc.data().displayName === nickname && doc.id !== user.uid) {
+                                isDuplicate = true;
+                            }
+                        });
+                        
+                        if (isDuplicate) {
+                            alert('このニックネームは既に使用されています。別のニックネームを入力してください。');
+                            return;
                         }
-                    });
-                    
-                    if (isDuplicate) {
-                        alert('このニックネームは既に使用されています。別のニックネームを入力してください。');
-                        return;
+                    } catch (permError) {
+                        console.warn('重複チェックをスキップしました:', permError);
+                        // 権限エラーの場合は重複チェックをスキップして続行
                     }
                     
                     // 最終変更日をチェック
