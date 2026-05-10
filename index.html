@@ -3187,7 +3187,17 @@
         // ユーザーのランキングを読み込み
         async function loadUserRanking(userId) {
             try {
-                // 全ユーザーをtotalRating順で取得
+                // 自分の累計評価を確認
+                const myUserRef = doc(db, 'users', userId);
+                const myUserDoc = await getDoc(myUserRef);
+                
+                if (!myUserDoc.exists() || (myUserDoc.data().totalRating || 0) === 0) {
+                    // 累計評価が0点の場合はランキング非表示
+                    document.getElementById('userRanking').textContent = '-';
+                    return;
+                }
+                
+                // 全ユーザーをtotalRating順で取得（評価0より大きいユーザーのみ）
                 const usersRef = collection(db, 'users');
                 const q = query(usersRef, orderBy('totalRating', 'desc'));
                 const querySnapshot = await getDocs(q);
@@ -3196,12 +3206,16 @@
                 let found = false;
                 
                 querySnapshot.forEach((doc) => {
-                    if (doc.id === userId) {
-                        document.getElementById('userRanking').textContent = `${ranking}位`;
-                        found = true;
-                    }
-                    if (!found) {
-                        ranking++;
+                    const data = doc.data();
+                    // totalRatingが0より大きいユーザーのみカウント
+                    if ((data.totalRating || 0) > 0) {
+                        if (doc.id === userId) {
+                            document.getElementById('userRanking').textContent = `${ranking}位`;
+                            found = true;
+                        }
+                        if (!found) {
+                            ranking++;
+                        }
                     }
                 });
                 
