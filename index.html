@@ -1168,7 +1168,8 @@
             margin-bottom: 0.5rem;
         }
 
-        .twitter-link-btn {
+        .twitter-link-btn,
+        .profile-url-btn {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -1183,10 +1184,24 @@
             box-shadow: 0 2px 8px rgba(29, 161, 242, 0.3);
         }
 
+        .profile-url-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+        }
+
+        .twitter-link-btn:hover,
+        .profile-url-btn:hover {
+            transform: translateY(-2px);
+        }
+
         .twitter-link-btn:hover {
             background: #1a91da;
-            transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(29, 161, 242, 0.4);
+        }
+
+        .profile-url-btn:hover {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
         }
 
         .twitter-icon {
@@ -1417,7 +1432,8 @@
                     <div class="profile-info">
                         <h2 id="profileName">ユーザー名</h2>
                         <div class="member-badge" id="profileBadge">👑 会員</div>
-                        <div id="profileTwitterLink" style="margin-top: 0.5rem;"></div>
+                        <div id="profileBio" style="margin-top: 0.8rem; line-height: 1.6; color: #666; white-space: pre-wrap;"></div>
+                        <div id="profileUrlLink" style="margin-top: 0.5rem;"></div>
                     </div>
                 </div>
                 
@@ -1618,19 +1634,30 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="initialTwitterInput">X (Twitter) ユーザー名（任意）</label>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-weight: 600; color: #666;">@</span>
-                        <input 
-                            type="text" 
-                            id="initialTwitterInput" 
-                            placeholder="例: mrelkkosu"
-                            maxlength="15"
-                            style="flex: 1;"
-                        >
-                    </div>
+                    <label for="initialProfileInput">プロフィール（任意）</label>
+                    <textarea 
+                        id="initialProfileInput" 
+                        placeholder="例: 大喜利が大好きです！面白い回答を目指して頑張ります✨"
+                        maxlength="200"
+                        rows="3"
+                        style="width: 100%; padding: 0.8rem; border: 2px solid #ddd; border-radius: 10px; font-family: inherit; font-size: 0.95rem; resize: vertical;"
+                    ></textarea>
                     <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
-                        ℹ️ @なしでユーザー名のみを入力してください
+                        最大200文字
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label for="initialUrlInput">リンク（任意）</label>
+                    <input 
+                        type="url" 
+                        id="initialUrlInput" 
+                        placeholder="例: https://example.com"
+                        maxlength="200"
+                        style="width: 100%;"
+                    >
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                        TwitterやYouTube、ブログなどのURLを入力できます
                     </p>
                 </div>
 
@@ -1686,19 +1713,30 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="editTwitterInput">X (Twitter) ユーザー名（任意）</label>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-weight: 600; color: #666;">@</span>
-                        <input 
-                            type="text" 
-                            id="editTwitterInput" 
-                            placeholder="例: mrelkkosu"
-                            maxlength="15"
-                            style="flex: 1;"
-                        >
-                    </div>
+                    <label for="editProfileInput">プロフィール（任意）</label>
+                    <textarea 
+                        id="editProfileInput" 
+                        placeholder="例: 大喜利が大好きです！面白い回答を目指して頑張ります✨"
+                        maxlength="200"
+                        rows="3"
+                        style="width: 100%; padding: 0.8rem; border: 2px solid #ddd; border-radius: 10px; font-family: inherit; font-size: 0.95rem; resize: vertical;"
+                    ></textarea>
                     <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
-                        ℹ️ @なしでユーザー名のみを入力してください
+                        最大200文字
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label for="editUrlInput">リンク（任意）</label>
+                    <input 
+                        type="url" 
+                        id="editUrlInput" 
+                        placeholder="例: https://example.com"
+                        maxlength="200"
+                        style="width: 100%;"
+                    >
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                        TwitterやYouTube、ブログなどのURLを入力できます
                     </p>
                 </div>
 
@@ -2470,9 +2508,11 @@
         // ニックネームを保存
         window.saveNickname = async function() {
             const nicknameInput = document.getElementById('nicknameInput');
-            const twitterInput = document.getElementById('initialTwitterInput');
+            const profileInput = document.getElementById('initialProfileInput');
+            const urlInput = document.getElementById('initialUrlInput');
             const nickname = nicknameInput.value.trim();
-            const twitter = twitterInput.value.trim().replace('@', ''); // @を除去
+            const profile = profileInput.value.trim();
+            const url = urlInput.value.trim();
             
             if (!nickname) {
                 alert('ニックネームを入力してください');
@@ -2491,7 +2531,8 @@
                 await setDoc(userRef, {
                     displayName: nickname,
                     avatar: selectedAvatar,
-                    twitter: twitter || null,
+                    profile: profile || null,
+                    url: url || null,
                     totalRating: 0,      // 累計評価スコア
                     totalLikes: 0,       // 旧システム用（互換性のため残す）
                     totalPosts: 0,
@@ -2526,8 +2567,11 @@
                 // ニックネームを設定
                 document.getElementById('editNicknameInput').value = userData.displayName || '';
                 
-                // Xリンクを設定
-                document.getElementById('editTwitterInput').value = userData.twitter || '';
+                // プロフィールを設定
+                document.getElementById('editProfileInput').value = userData.profile || '';
+                
+                // URLを設定
+                document.getElementById('editUrlInput').value = userData.url || '';
                 
                 // 次回変更可能日の情報を表示
                 const nameChangeInfo = document.getElementById('nameChangeInfo');
@@ -2736,9 +2780,11 @@
         // プロフィールを更新
         window.updateProfile = async function() {
             const nicknameInput = document.getElementById('editNicknameInput');
-            const twitterInput = document.getElementById('editTwitterInput');
+            const profileInput = document.getElementById('editProfileInput');
+            const urlInput = document.getElementById('editUrlInput');
             const nickname = nicknameInput.value.trim();
-            const twitter = twitterInput.value.trim().replace('@', ''); // @を除去
+            const profile = profileInput.value.trim();
+            const url = urlInput.value.trim();
             
             if (!nickname) {
                 alert('ニックネームを入力してください');
@@ -2779,14 +2825,16 @@
                     await updateDoc(userRef, {
                         displayName: nickname,
                         avatar: selectedAvatar,
-                        twitter: twitter || null,
+                        profile: profile || null,
+                        url: url || null,
                         lastNameChange: new Date()
                     });
                 } else {
-                    // アイコンとXリンクのみ変更
+                    // アイコン、プロフィール、URLのみ変更
                     await updateDoc(userRef, {
                         avatar: selectedAvatar,
-                        twitter: twitter || null
+                        profile: profile || null,
+                        url: url || null
                     });
                 }
 
@@ -3525,19 +3573,34 @@
                 // ニックネーム表示
                 document.getElementById('profileName').textContent = userData.displayName || 'ユーザー';
                 
-                // Xリンク表示
-                const twitterLinkDiv = document.getElementById('profileTwitterLink');
-                if (userData.twitter) {
-                    twitterLinkDiv.innerHTML = `
-                        <a href="https://x.com/${userData.twitter}" target="_blank" class="twitter-link-btn">
-                            <svg class="twitter-icon" viewBox="0 0 24 24" fill="white">
-                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                            </svg>
-                            @${userData.twitter}
+                // プロフィール表示
+                const profileBioDiv = document.getElementById('profileBio');
+                if (userData.profile) {
+                    profileBioDiv.textContent = userData.profile;
+                    profileBioDiv.style.display = 'block';
+                } else {
+                    profileBioDiv.style.display = 'none';
+                }
+                
+                // URL表示
+                const urlLinkDiv = document.getElementById('profileUrlLink');
+                if (userData.url) {
+                    // URLからドメイン名を取得
+                    let displayText = userData.url;
+                    try {
+                        const urlObj = new URL(userData.url);
+                        displayText = urlObj.hostname.replace('www.', '');
+                    } catch (e) {
+                        displayText = userData.url;
+                    }
+                    
+                    urlLinkDiv.innerHTML = `
+                        <a href="${userData.url}" target="_blank" rel="noopener noreferrer" class="profile-url-btn">
+                            🔗 ${escapeHtml(displayText)}
                         </a>
                     `;
                 } else {
-                    twitterLinkDiv.innerHTML = '';
+                    urlLinkDiv.innerHTML = '';
                 }
                 
                 // 統計表示
