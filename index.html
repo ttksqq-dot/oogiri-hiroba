@@ -3085,6 +3085,12 @@
                     userAvatar = userDoc.data().avatar || '👤';
                 }
 
+                // ニックネームが未設定の場合、ニックネーム登録モーダルを表示
+                if (!displayName) {
+                    document.getElementById('nicknameModal').classList.add('show');
+                    return;
+                }
+
                 // アイコン表示用のHTML
                 let avatarHTML;
                 if (userAvatar.startsWith('data:image')) {
