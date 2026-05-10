@@ -819,6 +819,48 @@
             font-size: 1rem;
         }
 
+        .category-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #FFF8F0;
+            border-radius: 15px;
+        }
+
+        .category-filter-btn {
+            background: white;
+            border: 2px solid var(--accent);
+            color: var(--primary);
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .category-filter-btn:hover {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .category-filter {
+                gap: 0.5rem;
+            }
+            
+            .category-filter-btn {
+                font-size: 0.85rem;
+                padding: 0.6rem 1rem;
+            }
+        }
+
         .odai-grid {
             display: flex;
             flex-direction: column;
@@ -1524,6 +1566,32 @@
                 <h2>📝 お題一覧</h2>
                 <p>好きなお題を選んで、みんなの回答を見たり、自分の回答を投稿しよう！</p>
             </div>
+            
+            <!-- カテゴリフィルターボタン -->
+            <div class="category-filter">
+                <button class="category-filter-btn" onclick="scrollToCategory('shop')">
+                    🏪 お店・サービス
+                </button>
+                <button class="category-filter-btn" onclick="scrollToCategory('entertainment')">
+                    🎭 エンタメ・メディア
+                </button>
+                <button class="category-filter-btn" onclick="scrollToCategory('character')">
+                    👥 人物・職業
+                </button>
+                <button class="category-filter-btn" onclick="scrollToCategory('tech')">
+                    🤖 テクノロジー
+                </button>
+                <button class="category-filter-btn" onclick="scrollToCategory('ability')">
+                    ✨ 能力・魔法
+                </button>
+                <button class="category-filter-btn" onclick="scrollToCategory('fantasy')">
+                    🌍 異世界・ファンタジー
+                </button>
+                <button class="category-filter-btn" onclick="scrollToCategory('other')">
+                    📝 その他・一般
+                </button>
+            </div>
+            
             <div class="odai-grid" id="odaiGrid">
                 <!-- お題カードがJavaScriptで動的に生成されます -->
             </div>
@@ -2586,7 +2654,7 @@
                 
                 const category = categories[categoryKey];
                 return `
-                    <div class="odai-category">
+                    <div class="odai-category" id="category-${categoryKey}">
                         <h3 class="odai-category-title">${category.name}</h3>
                         <div class="odai-list">
                             ${items.map(({ odai, index }) => `
@@ -4241,6 +4309,18 @@
                 }
             }
         };
+
+        // カテゴリまでスクロール
+        window.scrollToCategory = function(categoryKey) {
+            const categoryElement = document.getElementById(`category-${categoryKey}`);
+            if (categoryElement) {
+                categoryElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        };
+
         // URL履歴機能（ブラウザの戻る/進むボタン対応）
         window.addEventListener('popstate', function(event) {
             const hash = window.location.hash;
