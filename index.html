@@ -1226,6 +1226,7 @@
             padding: 1rem;
             border-radius: 10px;
             border: 1px dashed #dee2e6;
+            min-height: 280px; /* 広告が表示されるスペースを確保 */
         }
 
         .ad-label {
@@ -1240,6 +1241,11 @@
         .ad-container ins {
             display: block;
             margin: 0 auto;
+        }
+
+        /* 広告コンテナ内のスクリプトタグ用 */
+        .ad-container > div {
+            min-height: 250px; /* 広告本体の高さ */
         }
 
         /* ランキングページ用スタイル */
