@@ -3237,6 +3237,23 @@
 
         // 初期化：URLパラメータをチェック
         // 今日のお題を取得（日付ベース）
+        // お題のユニークIDを生成（日付ベース）
+        function getOdaiId(odaiIndex) {
+            const baseDate = new Date('2026-05-10');
+            baseDate.setHours(0, 0, 0, 0);
+            
+            // お題が表示される日付を計算
+            const odaiDate = new Date(baseDate);
+            odaiDate.setDate(baseDate.getDate() + odaiIndex);
+            
+            // YYYY-MM-DD形式のIDを生成
+            const year = odaiDate.getFullYear();
+            const month = String(odaiDate.getMonth() + 1).padStart(2, '0');
+            const day = String(odaiDate.getDate()).padStart(2, '0');
+            
+            return `odai_${year}-${month}-${day}_${odaiIndex}`;
+        }
+
         function getTodaysOdaiIndex() {
             // 最新の利用可能なお題リストを取得
             odaiList = getAvailableOdaiList();
@@ -4041,6 +4058,9 @@
             }
 
             try {
+                // 現在のお題IDを取得
+                const currentOdaiId = getOdaiId(currentOdaiIndex);
+                
                 // Firestoreに保存
                 await addDoc(collection(db, 'answers'), {
                     name: name,
@@ -4052,6 +4072,7 @@
                     userId: window.currentUser ? window.currentUser.uid : null,
                     isGuest: !window.currentUser,
                     odai: document.getElementById('odai').textContent,
+                    odaiId: currentOdaiId,  // お題のユニークID
                     createdAt: new Date()
                 });
 
@@ -4111,15 +4132,24 @@
 
             try {
                 const currentOdai = odaiList[currentOdaiIndex];
+                const currentOdaiId = getOdaiId(currentOdaiIndex);
                 const q = query(collection(db, 'answers'), orderBy('createdAt', 'desc'));
                 const querySnapshot = await getDocs(q);
                 
                 window.answers = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    // 現在のお題の回答のみを追加
-                    if (data.odai === currentOdai) {
-                        window.answers.push({ id: doc.id, ...data });
+                    // odaiIdがあれば優先的に使用、なければodaiテキストで判定（後方互換性）
+                    if (data.odaiId) {
+                        // 新しいシステム: odaiIdで判定
+                        if (data.odaiId === currentOdaiId) {
+                            window.answers.push({ id: doc.id, ...data });
+                        }
+                    } else {
+                        // 古いシステム: odaiテキストで判定（既存データ用）
+                        if (data.odai === currentOdai) {
+                            window.answers.push({ id: doc.id, ...data });
+                        }
                     }
                 });
 
