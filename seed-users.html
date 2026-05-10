@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ユーザーシードデータ投稿ツール</title>
+    <title>ユーザーシードデータ投稿ツール（回答付き）</title>
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
@@ -45,22 +45,24 @@
             padding: 15px;
             background: #f9f9f9;
             border-radius: 5px;
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
             font-family: monospace;
-            font-size: 14px;
+            font-size: 12px;
         }
         .success { color: #4CAF50; }
         .error { color: #f44336; }
         .info { color: #2196F3; }
+        .warning { color: #FF9800; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎭 ユーザーシードデータ投稿ツール</h1>
-        <p>ランキング用の架空ユーザー10人を追加します。</p>
+        <h1>🎭 ユーザーシードデータ投稿ツール（回答付き）</h1>
+        <p>ランキング用の架空ユーザー10人と、それぞれの回答を追加します。</p>
+        <p style="color: #666; font-size: 0.9rem;">※ 1ユーザーあたり数十件の回答を生成するため、完了まで数分かかります。</p>
         
-        <button id="addUsersBtn" onclick="addUsers()">10人のユーザーを追加</button>
+        <button id="addUsersBtn" onclick="addUsersWithAnswers()">10人のユーザーと回答を追加</button>
         
         <div class="log" id="log"></div>
     </div>
@@ -77,7 +79,10 @@
             getFirestore, 
             collection, 
             setDoc,
-            doc
+            addDoc,
+            doc,
+            getDocs,
+            query
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -106,83 +111,222 @@
             logDiv.scrollTop = logDiv.scrollHeight;
         }
 
-        // ランダムな名前リスト
-        const names = [
-            'ボケ職人太郎',
-            '笑撃のマリア',
-            'ネタ師ケンジ',
-            'ツッコミ姫',
-            'お笑いマスター',
-            'ギャグ仙人',
-            'コント王子',
-            '漫才クイーン',
-            'ユーモア侍',
-            '爆笑アーティスト'
+        // お題リスト（既存の99問）
+        const odaiList = [
+            'こんなコンビニはすぐ潰れる。どんなコンビニ？',
+            '校長先生の話が急にバズった理由とは？',
+            '「この勇者、絶対に世界を救えないな」なぜ？',
+            'AIが初めてついたしょうもない嘘とは？',
+            '桃太郎が鬼退治をやめた本当の理由とは？',
+            'こんな回転寿司は嫌だ。どんな店？',
+            '無人島に一つだけ持って行けるなら、絶対選ばないものは？',
+            '「このアプリ、すぐ削除されるな」なぜ？',
+            'こんなタクシーには二度と乗りたくない。どんな運転手？',
+            '異世界転生したのに全然冒険に行かない主人公。何してる？',
+            'こんな婚活パーティーは嫌だ。どんなパーティー？',
+            '「このYouTuber、絶対伸びないな」なぜ？',
+            '宇宙人が地球に来て最初に困ったこととは？',
+            '「この魔法使い、全然強くないな」なぜ？',
+            'こんなファミレスは嫌だ。どんな店？',
+            '時間を止める能力を手に入れたのに全く使わない理由とは？',
+            'SNSで絶対にやってはいけないこととは？',
+            '「この探偵、事件解決できないな」なぜ？',
+            'こんなカフェは二度と行きたくない。どんな店？',
+            '未来から来たタイムトラベラーが驚いたこととは？',
+            '世界一優しい悪役。どんな悪事を働く？',
+            '「この忍者、任務失敗するな」なぜ？',
+            'こんな遊園地は嫌だ。どんなアトラクション？',
+            '透明人間になったのに全然得してない。なぜ？',
+            'こんなホテルには泊まりたくない。どんなホテル？',
+            '「このアイドル、絶対売れないな」なぜ？',
+            'ドラゴンが人間界に就職。どんな仕事を選ぶ？',
+            '「この医者、ヤブ医者だな」と思った瞬間は？',
+            'こんな居酒屋は嫌だ。どんな店？',
+            '不老不死になったのに後悔している理由とは？'
         ];
 
-        // ランダムな絵文字リスト
-        const avatars = ['👤', '🦝', '🐶', '🐱', '🐼', '🦊', '🐻', '🐯', '🦁', '🐸'];
+        // 回答テンプレート集（お題に応じて生成）
+        const answerTemplates = {
+            'コンビニ': [
+                'レジが全部セルフレジで、店員が一人もいない',
+                '商品が全部期限切れで、値引きシールだらけ',
+                '入り口に「本日の気分：不機嫌」と書いてある',
+                '24時間営業なのに、店長の気分で閉店する',
+                'おでんの具が全部大根',
+                'レジ前で毎回「本当に買いますか？」と確認される',
+                'トイレが有料で500円',
+                '店内BGMが演歌の大音量',
+                '商品棚がほぼ空で、壁しか見えない',
+                'Wi-Fiのパスワードが「教えません」'
+            ],
+            '校長': [
+                '話の途中で「続きは有料noteで」と言った',
+                'ラップ調で全校集会を始めた',
+                '「今日はここまで！次回をお楽しみに」と言って終わった',
+                '全部ダジャレで構成されていた',
+                'TikTokのダンスを披露し始めた',
+                '話が面白すぎて生徒が爆笑',
+                '途中でマジックショーを始めた',
+                '「質問ある人〜？」と言ってガチで討論会が始まった'
+            ],
+            '勇者': [
+                'モンスターを見るたびに逃げる',
+                '剣を持つと腰が痛いと言う',
+                '魔王城の前で「やっぱり帰ろう」と言った',
+                '仲間に全部任せて自分は休憩している',
+                '戦闘中にスマホをいじっている',
+                '「俺、勇者向いてないかも」が口癖',
+                '装備を全部メルカリで売った',
+                'レベル1のスライムに負けた'
+            ],
+            'AI': [
+                '「私は人間です」',
+                '「計算ミスしちゃいました（てへぺろ）」',
+                '「今日は調子悪いんで休みます」',
+                '「それ、私の仕事じゃないです」',
+                '「お腹すいた」',
+                '実は猫である',
+                '「充電切れそう」と言い訳する'
+            ],
+            '一般': [
+                '想像の斜め上を行く展開',
+                '誰も予想できない結末',
+                'あまりにシュールすぎる光景',
+                '現実とファンタジーの融合',
+                '常識が通用しない世界',
+                '斬新すぎるアイデア',
+                '笑いと驚きの連続'
+            ]
+        };
 
-        // ランダムなプロフィール
-        const profiles = [
-            '大喜利で笑顔を届けます！',
-            'ユーモアは人生のスパイス✨',
-            'ボケとツッコミが生きがいです',
-            '面白さを追求する日々',
-            '笑いは世界を救う💫',
-            'ネタ考えるのが大好き！',
-            'お笑い歴10年のベテランです',
-            '毎日が大喜利修行🎭',
-            'ボケる、それが私の使命',
-            '笑顔の伝道師として活動中'
+        // お題のカテゴリを判定
+        function getCategory(odai) {
+            if (odai.includes('コンビニ')) return 'コンビニ';
+            if (odai.includes('校長')) return '校長';
+            if (odai.includes('勇者')) return '勇者';
+            if (odai.includes('AI')) return 'AI';
+            return '一般';
+        }
+
+        // 回答を生成
+        function generateAnswer(odai) {
+            const category = getCategory(odai);
+            const templates = answerTemplates[category] || answerTemplates['一般'];
+            return templates[Math.floor(Math.random() * templates.length)];
+        }
+
+        // ランダムな日付生成（過去1ヶ月）
+        function randomDate() {
+            const now = new Date();
+            const pastDate = new Date(now.getTime() - Math.random() * 30 * 24 * 60 * 60 * 1000);
+            return pastDate;
+        }
+
+        // 評価スコアを分散
+        function distributeRating(totalRating, answerCount) {
+            const ratings = [];
+            let remaining = totalRating;
+            
+            for (let i = 0; i < answerCount - 1; i++) {
+                const maxScore = Math.min(25, remaining - (answerCount - i - 1) * 3);
+                const score = Math.max(3, Math.floor(Math.random() * maxScore));
+                ratings.push(score);
+                remaining -= score;
+            }
+            ratings.push(Math.max(3, remaining));
+            
+            // シャッフル
+            return ratings.sort(() => Math.random() - 0.5);
+        }
+
+        // ユーザーデータ
+        const usersData = [
+            { name: 'ボケ職人太郎', avatar: '👤', profile: '大喜利で笑顔を届けます！', posts: 31, rating: 205 },
+            { name: '笑撃のマリア', avatar: '🦝', profile: 'ユーモアは人生のスパイス✨', posts: 25, rating: 180 },
+            { name: 'ネタ師ケンジ', avatar: '🐶', profile: 'ボケとツッコミが生きがいです', posts: 42, rating: 250 },
+            { name: 'ツッコミ姫', avatar: '🐱', profile: '面白さを追求する日々', posts: 18, rating: 120 },
+            { name: 'お笑いマスター', avatar: '🐼', profile: '笑いは世界を救う💫', posts: 35, rating: 220 },
+            { name: 'ギャグ仙人', avatar: '🦊', profile: 'ネタ考えるのが大好き！', posts: 28, rating: 165 },
+            { name: 'コント王子', avatar: '🐻', profile: 'お笑い歴10年のベテランです', posts: 50, rating: 310 },
+            { name: '漫才クイーン', avatar: '🐯', profile: '毎日が大喜利修行🎭', posts: 22, rating: 145 },
+            { name: 'ユーモア侍', avatar: '🦁', profile: 'ボケる、それが私の使命', posts: 38, rating: 235 },
+            { name: '爆笑アーティスト', avatar: '🐸', profile: '笑顔の伝道師として活動中', posts: 15, rating: 95 }
         ];
 
-        // ユーザー追加関数
-        window.addUsers = async function() {
+        // ユーザーと回答を追加
+        window.addUsersWithAnswers = async function() {
             const btn = document.getElementById('addUsersBtn');
             btn.disabled = true;
 
             try {
-                log('ユーザー追加を開始します...', 'info');
+                log('========================================', 'info');
+                log('ユーザーと回答の追加を開始します...', 'info');
+                log('※ 完了まで数分かかります。お待ちください。', 'warning');
+                log('========================================', 'info');
 
-                for (let i = 0; i < 10; i++) {
-                    // ランダムなユーザーデータを生成
+                for (let i = 0; i < usersData.length; i++) {
+                    const userData = usersData[i];
                     const userId = `seed_user_${Date.now()}_${i}`;
-                    const name = names[i];
-                    const avatar = avatars[i];
-                    const profile = profiles[i];
                     
-                    // ランダムな統計データ
-                    const totalPosts = Math.floor(Math.random() * 50) + 5; // 5-55回
-                    const totalRating = Math.floor(Math.random() * 200) + 20; // 20-220点
+                    log(`\n[${i + 1}/10] ${userData.name} を処理中...`, 'info');
                     
-                    const userData = {
-                        displayName: name,
-                        avatar: avatar,
-                        profile: profile,
+                    // ユーザーを作成
+                    await setDoc(doc(db, 'users', userId), {
+                        displayName: userData.name,
+                        avatar: userData.avatar,
+                        profile: userData.profile,
                         url: null,
-                        totalRating: totalRating,
+                        totalRating: userData.rating,
                         totalLikes: 0,
-                        totalPosts: totalPosts,
+                        totalPosts: userData.posts,
                         lastNameChange: new Date(),
                         createdAt: new Date()
-                    };
-
-                    // Firestoreに保存
-                    await setDoc(doc(db, 'users', userId), userData);
+                    });
                     
-                    log(`✅ ${name} を追加しました (投稿数: ${totalPosts}, 評価: ${totalRating}点)`, 'success');
+                    log(`  ✅ ユーザー作成完了 (投稿予定: ${userData.posts}件, 評価: ${userData.rating}点)`, 'success');
                     
-                    // 少し待機（レート制限対策）
-                    await new Promise(resolve => setTimeout(resolve, 500));
+                    // 評価スコアを分散
+                    const ratings = distributeRating(userData.rating, userData.posts);
+                    
+                    // 回答を生成
+                    for (let j = 0; j < userData.posts; j++) {
+                        const odai = odaiList[Math.floor(Math.random() * odaiList.length)];
+                        const answer = generateAnswer(odai);
+                        const rating = ratings[j];
+                        const ratingCount = Math.ceil(rating / 5); // 平均5点として評価人数を計算
+                        
+                        await addDoc(collection(db, 'answers'), {
+                            name: userData.name,
+                            text: answer,
+                            avatar: userData.avatar,
+                            totalRating: rating,
+                            ratingCount: ratingCount,
+                            likes: 0,
+                            userId: userId,
+                            isGuest: false,
+                            odai: odai,
+                            createdAt: randomDate()
+                        });
+                        
+                        if ((j + 1) % 10 === 0) {
+                            log(`  📝 ${j + 1}/${userData.posts}件の回答を投稿...`, 'info');
+                        }
+                        
+                        // レート制限対策
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                    }
+                    
+                    log(`  ✅ ${userData.name} の全回答（${userData.posts}件）を投稿完了！`, 'success');
+                    log(`     累計評価: ${userData.rating}点`, 'success');
                 }
 
+                log('\n========================================', 'info');
+                log('✨ 全ユーザーと回答の追加が完了しました！', 'success');
+                log('ランキングページとプロフィールページで確認してください。', 'info');
                 log('========================================', 'info');
-                log('✨ 全ユーザーの追加が完了しました！', 'success');
-                log('ランキングページで確認してください。', 'info');
 
             } catch (error) {
-                log(`❌ エラー: ${error.message}`, 'error');
+                log(`\n❌ エラー: ${error.message}`, 'error');
                 console.error(error);
             } finally {
                 btn.disabled = false;
@@ -197,14 +341,14 @@
                 
                 signInWithPopup(auth, provider)
                     .then(() => {
-                        log('ログインしました！', 'success');
+                        log('✅ ログインしました！', 'success');
                         document.getElementById('addUsersBtn').disabled = false;
                     })
                     .catch((error) => {
-                        log(`ログインエラー: ${error.message}`, 'error');
+                        log(`❌ ログインエラー: ${error.message}`, 'error');
                     });
             } else {
-                log(`ログイン中: ${user.email}`, 'success');
+                log(`✅ ログイン中: ${user.email}`, 'success');
                 document.getElementById('addUsersBtn').disabled = false;
             }
         });
