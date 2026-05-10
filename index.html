@@ -1771,8 +1771,11 @@
                     <input 
                         type="password" 
                         id="signupPassword" 
-                        placeholder="6文字以上"
+                        placeholder="7文字以上、英数字+記号または大文字"
                     >
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                        ℹ️ 7文字以上、英字・数字を含み、記号または大文字を含める
+                    </p>
                 </div>
                 
                 <div class="form-group">
@@ -3977,8 +3980,27 @@
                 return;
             }
 
-            if (password.length < 6) {
-                alert('パスワードは6文字以上で入力してください');
+            // パスワード要件チェック
+            if (password.length < 7) {
+                alert('パスワードは7文字以上で入力してください');
+                return;
+            }
+
+            // 英数字チェック
+            const hasLetter = /[a-zA-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            
+            if (!hasLetter || !hasNumber) {
+                alert('パスワードには英字と数字の両方を含めてください');
+                return;
+            }
+
+            // 記号または大文字チェック
+            const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+            const hasUpperCase = /[A-Z]/.test(password);
+            
+            if (!hasSymbol && !hasUpperCase) {
+                alert('パスワードには記号または大文字を含めてください');
                 return;
             }
 
@@ -3998,7 +4020,9 @@
                 } else if (error.code === 'auth/invalid-email') {
                     alert('有効なメールアドレスを入力してください');
                 } else if (error.code === 'auth/weak-password') {
-                    alert('パスワードが弱すぎます。6文字以上で入力してください');
+                    alert('パスワードが弱すぎます');
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    alert('メール/パスワード認証が有効になっていません。\n管理者に連絡してください。');
                 } else {
                     alert('登録に失敗しました: ' + error.message);
                 }
