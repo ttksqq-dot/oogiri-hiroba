@@ -3122,8 +3122,8 @@
             } else {
                 // ゲストモード
                 userInfo.innerHTML = `
-                    <button class="login-btn" onclick="loginWithGoogle()">
-                        Googleでログイン
+                    <button class="login-btn" onclick="showLoginModal()">
+                        会員登録 / ログイン
                     </button>
                 `;
                 guestNotice.style.display = 'block';
@@ -3238,7 +3238,7 @@
                 });
                 
                 if (todayPosts.length >= 2) {
-                    alert('ゲストは1日2回まで投稿できます。\n会員登録すると無制限に投稿できます！\n\n右上の「Googleでログイン」ボタンから登録してください。');
+                    alert('ゲストは1日2回まで投稿できます。\n会員登録すると無制限に投稿できます！\n\n右上の「会員登録 / ログイン」ボタンから登録してください。');
                     return;
                 }
             }
