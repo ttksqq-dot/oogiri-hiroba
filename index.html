@@ -2248,9 +2248,13 @@
             updateURL(null);
             document.getElementById('odaiListContainer').classList.add('show');
             document.getElementById('rankingContainer').classList.remove('show');
+            document.getElementById('profileContainer').classList.remove('show');
             document.getElementById('mainContainer').classList.add('hide');
             document.getElementById('backToListBtn').style.display = 'none';
             renderOdaiList();
+            
+            // URL履歴に追加
+            history.pushState({ page: 'odai-list' }, '', '#odai-list');
         };
 
         // 今日のお題に戻る
@@ -2268,12 +2272,16 @@
             // 表示を切り替え
             document.getElementById('odaiListContainer').classList.remove('show');
             document.getElementById('rankingContainer').classList.remove('show');
+            document.getElementById('profileContainer').classList.remove('show');
             document.getElementById('mainContainer').classList.remove('hide');
             document.getElementById('backToListBtn').style.display = 'inline-flex';
             document.getElementById('odai').textContent = odaiList[todayIndex];
             
             // 回答を読み込み
             loadAnswers();
+            
+            // URL履歴をトップページに戻す
+            history.pushState({ page: 'top' }, '', '/');
         };
 
         // ランキングページを表示
@@ -2282,9 +2290,13 @@
             document.getElementById('odaiListContainer').classList.remove('show');
             document.getElementById('mainContainer').classList.add('hide');
             document.getElementById('rankingContainer').classList.add('show');
+            document.getElementById('profileContainer').classList.remove('show');
             
             // ランキングを読み込み
             await loadRanking();
+            
+            // URL履歴に追加
+            history.pushState({ page: 'ranking' }, '', '#ranking');
         };
 
         // ランキングを読み込み（TOP30）
@@ -4075,6 +4087,30 @@
                 }
             }
         };
+        // URL履歴機能（ブラウザの戻る/進むボタン対応）
+        window.addEventListener('popstate', function(event) {
+            const hash = window.location.hash;
+            
+            if (hash === '#odai-list') {
+                showOdaiList();
+            } else if (hash === '#ranking') {
+                showRankingPage();
+            } else {
+                goToToday();
+            }
+        });
+
+        // ページ読み込み時にURLを判定
+        window.addEventListener('DOMContentLoaded', function() {
+            const hash = window.location.hash;
+            
+            if (hash === '#odai-list') {
+                showOdaiList();
+            } else if (hash === '#ranking') {
+                showRankingPage();
+            }
+            // それ以外は通常の初期化処理が実行される
+        });
     </script>
 </body>
 </html>
