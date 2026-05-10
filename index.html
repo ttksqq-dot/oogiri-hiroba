@@ -150,6 +150,147 @@
             padding: 2rem 1rem;
         }
 
+        /* サイト紹介セクション */
+        .intro-section {
+            margin-bottom: 2rem;
+        }
+
+        .intro-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFF8F0 100%);
+            border-radius: 25px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.15);
+            border: 3px solid var(--accent);
+        }
+
+        .intro-title {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 900;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .intro-description {
+            text-align: center;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+
+        .intro-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .intro-feature {
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 15px;
+            border: 2px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .intro-feature:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.2);
+        }
+
+        .intro-feature-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .intro-feature-title {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .intro-feature-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .intro-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .intro-cta-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .intro-cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        .intro-secondary-btn {
+            background: white;
+            color: var(--primary);
+            border: 3px solid var(--primary);
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .intro-secondary-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .intro-card {
+                padding: 1.5rem;
+            }
+
+            .intro-features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .intro-cta {
+                flex-direction: column;
+            }
+
+            .intro-cta-btn,
+            .intro-secondary-btn {
+                width: 100%;
+                padding: 0.9rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
         .member-badge {
             display: inline-block;
             background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
@@ -1679,6 +1820,49 @@
     <!-- メインコンテンツ -->
     <div class="main-container" id="mainContainer">
     <div class="container">
+        <!-- サイト紹介セクション -->
+        <div class="intro-section" id="introSection" style="display: block;">
+            <div class="intro-card">
+                <h2 class="intro-title">🎭 大喜利ひろばへようこそ！</h2>
+                <p class="intro-description">
+                    毎日更新される「お題」に対して、面白い回答を投稿して楽しむ大喜利コミュニティです。<br>
+                    ゲストでも投稿OK！会員登録すると、評価スコアやランキング、レベルアップなどの特典が使えます。
+                </p>
+                
+                <div class="intro-features">
+                    <div class="intro-feature">
+                        <div class="intro-feature-icon">📝</div>
+                        <div class="intro-feature-title">自由に投稿</div>
+                        <div class="intro-feature-text">ゲストでも会員でも、誰でも気軽に回答を投稿できます</div>
+                    </div>
+                    <div class="intro-feature">
+                        <div class="intro-feature-icon">⭐</div>
+                        <div class="intro-feature-title">評価システム</div>
+                        <div class="intro-feature-text">面白い回答には5段階評価で「いいね」を送ろう</div>
+                    </div>
+                    <div class="intro-feature">
+                        <div class="intro-feature-icon">🏆</div>
+                        <div class="intro-feature-title">ランキング</div>
+                        <div class="intro-feature-text">累計評価スコアでランキング上位を目指そう</div>
+                    </div>
+                    <div class="intro-feature">
+                        <div class="intro-feature-icon">🎯</div>
+                        <div class="intro-feature-title">レベルアップ</div>
+                        <div class="intro-feature-text">投稿や評価を集めてレベルを上げよう</div>
+                    </div>
+                </div>
+
+                <div class="intro-cta">
+                    <button class="intro-cta-btn" onclick="scrollToOdai()">
+                        今日のお題に挑戦する 🎤
+                    </button>
+                    <button class="intro-secondary-btn" onclick="goToOdaiList()">
+                        過去のお題を見る 📋
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- 会員統計（ログイン時のみ表示） -->
         <div class="stats-section" id="memberStatsContainer" style="display: none;">
             <div class="stat-item" onclick="showStatInfo('rating')" style="cursor: pointer;">
@@ -2432,6 +2616,19 @@
             
             // URL履歴をトップページに戻す
             history.pushState({ page: 'top' }, '', '/');
+        };
+
+        // 今日のお題セクションまでスクロール
+        window.scrollToOdai = function() {
+            const odaiSection = document.querySelector('.odai-section');
+            if (odaiSection) {
+                odaiSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        };
+
+        // お題一覧ページへ移動（showOdaiListのエイリアス）
+        window.goToOdaiList = function() {
+            showOdaiList();
         };
 
         // ランキングページを表示
@@ -3300,6 +3497,7 @@
             const memberStatsContainer = document.getElementById('memberStatsContainer');
             const nameInput = document.getElementById('nameInput');
             const nameLabel = document.getElementById('nameLabel');
+            const introSection = document.getElementById('introSection');
 
             if (user) {
                 // ユーザー情報を取得
@@ -3351,6 +3549,11 @@
                 nameInput.disabled = true;
                 nameLabel.style.display = 'none';
                 nameInput.style.display = 'none';
+                
+                // ログイン済みユーザーには紹介セクションを非表示
+                if (introSection) {
+                    introSection.style.display = 'none';
+                }
 
                 await loadUserStats(user.uid);
                 await loadUserRanking(user.uid);
@@ -3369,6 +3572,11 @@
                 nameInput.value = '';
                 nameLabel.style.display = 'block';
                 nameInput.style.display = 'block';
+                
+                // ゲストモードでは紹介セクションを表示
+                if (introSection) {
+                    introSection.style.display = 'block';
+                }
 
                 // ゲストの残り投稿回数を表示
                 const guestPosts = JSON.parse(localStorage.getItem('guestPosts')) || [];
