@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザーシードデータ投稿ツール</title>
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #FF6B35;
+            margin-bottom: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 ユーザーシードデータ投稿ツール</h1>
+        <p>ランキング用の架空ユーザー10人を追加します。</p>
+        
+        <button id="addUsersBtn" onclick="addUsers()">10人のユーザーを追加</button>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithPopup, 
+            GoogleAuthProvider,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            setDoc,
+            doc
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtA5J1GbPfEeFkyElHKJy7qqHLRzscdrk",
+            authDomain: "ogiri-hiroba.firebaseapp.com",
+            projectId: "ogiri-hiroba",
+            storageBucket: "ogiri-hiroba.firebasestorage.app",
+            messagingSenderId: "778117963805",
+            appId: "1:778117963805:web:8b53b31a000ce8e344e6f4",
+            measurementId: "G-9GM95VXL9N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        window.db = db;
+        window.auth = auth;
+
+        // ログ出力関数
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div class="${type}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        // ランダムな名前リスト
+        const names = [
+            'ボケ職人太郎',
+            '笑撃のマリア',
+            'ネタ師ケンジ',
+            'ツッコミ姫',
+            'お笑いマスター',
+            'ギャグ仙人',
+            'コント王子',
+            '漫才クイーン',
+            'ユーモア侍',
+            '爆笑アーティスト'
+        ];
+
+        // ランダムな絵文字リスト
+        const avatars = ['👤', '🦝', '🐶', '🐱', '🐼', '🦊', '🐻', '🐯', '🦁', '🐸'];
+
+        // ランダムなプロフィール
+        const profiles = [
+            '大喜利で笑顔を届けます！',
+            'ユーモアは人生のスパイス✨',
+            'ボケとツッコミが生きがいです',
+            '面白さを追求する日々',
+            '笑いは世界を救う💫',
+            'ネタ考えるのが大好き！',
+            'お笑い歴10年のベテランです',
+            '毎日が大喜利修行🎭',
+            'ボケる、それが私の使命',
+            '笑顔の伝道師として活動中'
+        ];
+
+        // ユーザー追加関数
+        window.addUsers = async function() {
+            const btn = document.getElementById('addUsersBtn');
+            btn.disabled = true;
+
+            try {
+                log('ユーザー追加を開始します...', 'info');
+
+                for (let i = 0; i < 10; i++) {
+                    // ランダムなユーザーデータを生成
+                    const userId = `seed_user_${Date.now()}_${i}`;
+                    const name = names[i];
+                    const avatar = avatars[i];
+                    const profile = profiles[i];
+                    
+                    // ランダムな統計データ
+                    const totalPosts = Math.floor(Math.random() * 50) + 5; // 5-55回
+                    const totalRating = Math.floor(Math.random() * 200) + 20; // 20-220点
+                    
+                    const userData = {
+                        displayName: name,
+                        avatar: avatar,
+                        profile: profile,
+                        url: null,
+                        totalRating: totalRating,
+                        totalLikes: 0,
+                        totalPosts: totalPosts,
+                        lastNameChange: new Date(),
+                        createdAt: new Date()
+                    };
+
+                    // Firestoreに保存
+                    await setDoc(doc(db, 'users', userId), userData);
+                    
+                    log(`✅ ${name} を追加しました (投稿数: ${totalPosts}, 評価: ${totalRating}点)`, 'success');
+                    
+                    // 少し待機（レート制限対策）
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+
+                log('========================================', 'info');
+                log('✨ 全ユーザーの追加が完了しました！', 'success');
+                log('ランキングページで確認してください。', 'info');
+
+            } catch (error) {
+                log(`❌ エラー: ${error.message}`, 'error');
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        // 認証状態の監視
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                log('Googleアカウントでログインしてください', 'error');
+                document.getElementById('addUsersBtn').disabled = true;
+                
+                signInWithPopup(auth, provider)
+                    .then(() => {
+                        log('ログインしました！', 'success');
+                        document.getElementById('addUsersBtn').disabled = false;
+                    })
+                    .catch((error) => {
+                        log(`ログインエラー: ${error.message}`, 'error');
+                    });
+            } else {
+                log(`ログイン中: ${user.email}`, 'success');
+                document.getElementById('addUsersBtn').disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
