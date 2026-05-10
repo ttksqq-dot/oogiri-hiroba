@@ -183,12 +183,38 @@
             margin-bottom: 2rem;
         }
 
+        /* 2カラムレイアウトのラッパー */
+        .intro-card-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
         .intro-card {
             background: linear-gradient(135deg, #FFFFFF 0%, #FFF8F0 100%);
             border-radius: 25px;
             padding: 2.5rem;
             box-shadow: 0 8px 30px rgba(255, 107, 53, 0.15);
             border: 3px solid var(--accent);
+        }
+
+        /* 広告エリア */
+        .intro-ad {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px dashed #dee2e6;
+            position: sticky;
+            top: 1rem;
+        }
+
+        .intro-ad img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
         }
 
         .intro-title {
@@ -298,6 +324,16 @@
         }
 
         @media (max-width: 768px) {
+            .intro-card-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .intro-ad {
+                position: static;
+                order: -1; /* 広告を上に表示 */
+            }
+
             .intro-card {
                 padding: 1.5rem;
             }
@@ -2085,43 +2121,53 @@
     <div class="container">
         <!-- サイト紹介セクション -->
         <div class="intro-section" id="introSection" style="display: block;">
-            <div class="intro-card">
-                <h2 class="intro-title">🎭 大喜利ひろばへようこそ！</h2>
-                <p class="intro-description">
-                    毎日更新される「お題」に対して、面白い回答を投稿して楽しむ大喜利コミュニティです。<br>
-                    ゲストでも投稿OK！会員登録すると、評価スコアやランキング、レベルアップなどの特典が使えます。
-                </p>
-                
-                <div class="intro-features">
-                    <div class="intro-feature">
-                        <div class="intro-feature-icon">📝</div>
-                        <div class="intro-feature-title">自由に投稿</div>
-                        <div class="intro-feature-text">ゲストでも会員でも、誰でも気軽に回答を投稿できます</div>
+            <div class="intro-card-wrapper">
+                <div class="intro-card">
+                    <h2 class="intro-title">🎭 大喜利ひろばへようこそ！</h2>
+                    <p class="intro-description">
+                        毎日更新される「お題」に対して、面白い回答を投稿して楽しむ大喜利コミュニティです。<br>
+                        ゲストでも投稿OK！会員登録すると、評価スコアやランキング、レベルアップなどの特典が使えます。
+                    </p>
+                    
+                    <div class="intro-features">
+                        <div class="intro-feature">
+                            <div class="intro-feature-icon">📝</div>
+                            <div class="intro-feature-title">自由に投稿</div>
+                            <div class="intro-feature-text">ゲストでも会員でも、誰でも気軽に回答を投稿できます</div>
+                        </div>
+                        <div class="intro-feature">
+                            <div class="intro-feature-icon">⭐</div>
+                            <div class="intro-feature-title">評価システム</div>
+                            <div class="intro-feature-text">面白い回答には5段階評価で「いいね」を送ろう</div>
+                        </div>
+                        <div class="intro-feature">
+                            <div class="intro-feature-icon">🏆</div>
+                            <div class="intro-feature-title">ランキング</div>
+                            <div class="intro-feature-text">累計評価スコアでランキング上位を目指そう</div>
+                        </div>
+                        <div class="intro-feature">
+                            <div class="intro-feature-icon">🎯</div>
+                            <div class="intro-feature-title">レベルアップ</div>
+                            <div class="intro-feature-text">投稿や評価を集めてレベルを上げよう</div>
+                        </div>
                     </div>
-                    <div class="intro-feature">
-                        <div class="intro-feature-icon">⭐</div>
-                        <div class="intro-feature-title">評価システム</div>
-                        <div class="intro-feature-text">面白い回答には5段階評価で「いいね」を送ろう</div>
-                    </div>
-                    <div class="intro-feature">
-                        <div class="intro-feature-icon">🏆</div>
-                        <div class="intro-feature-title">ランキング</div>
-                        <div class="intro-feature-text">累計評価スコアでランキング上位を目指そう</div>
-                    </div>
-                    <div class="intro-feature">
-                        <div class="intro-feature-icon">🎯</div>
-                        <div class="intro-feature-title">レベルアップ</div>
-                        <div class="intro-feature-text">投稿や評価を集めてレベルを上げよう</div>
+
+                    <div class="intro-cta">
+                        <button class="intro-cta-btn" onclick="scrollToOdai()">
+                            今日のお題に挑戦する 🎤
+                        </button>
+                        <button class="intro-secondary-btn" onclick="goToOdaiList()">
+                            過去のお題を見る 📋
+                        </button>
                     </div>
                 </div>
-
-                <div class="intro-cta">
-                    <button class="intro-cta-btn" onclick="scrollToOdai()">
-                        今日のお題に挑戦する 🎤
-                    </button>
-                    <button class="intro-secondary-btn" onclick="goToOdaiList()">
-                        過去のお題を見る 📋
-                    </button>
+                
+                <!-- A8.net 広告 -->
+                <div class="intro-ad">
+                    <a href="https://px.a8.net/svt/ejp?a8mat=4B3N6Z+6F091E+5TB0+5ZMCH" rel="nofollow">
+                        <img border="0" width="300" height="250" alt="" src="https://www27.a8.net/svt/bgt?aid=260510507388&wid=003&eno=01&mid=s00000027126001006000&mc=1">
+                    </a>
+                    <img border="0" width="1" height="1" src="https://www11.a8.net/0.gif?a8mat=4B3N6Z+6F091E+5TB0+5ZMCH" alt="">
                 </div>
             </div>
         </div>
