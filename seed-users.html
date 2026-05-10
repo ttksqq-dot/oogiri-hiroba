@@ -215,11 +215,14 @@
             return templates[Math.floor(Math.random() * templates.length)];
         }
 
-        // ランダムな日付生成（過去1ヶ月）
+        // ランダムな日付生成（今日の0時〜14時）
         function randomDate() {
-            const now = new Date();
-            const pastDate = new Date(now.getTime() - Math.random() * 30 * 24 * 60 * 60 * 1000);
-            return pastDate;
+            const today = new Date('2026-05-10'); // 今日の日付
+            const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // 0時
+            const endTime = new Date(today.setHours(14, 0, 0, 0)); // 14時
+            
+            const randomTime = startOfDay.getTime() + Math.random() * (endTime.getTime() - startOfDay.getTime());
+            return new Date(randomTime);
         }
 
         // 評価スコアを分散
