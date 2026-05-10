@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大喜利ひろば - ログイン版</title>
+    <title>大喜利ひろば - 毎日お題に挑戦！面白い回答で競おう</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="毎日更新される大喜利お題に回答して、評価を競おう！ゲストでも投稿OK。ランキング機能やレベルアップシステムで楽しめる大喜利コミュニティサイト。">
+    <meta name="keywords" content="大喜利,お題,ボケて,お笑い,コミュニティ,ランキング,面白い,回答,投稿">
+    <meta name="author" content="大喜利ひろば">
+    
+    <!-- OGP (Open Graph Protocol) for Social Media -->
+    <meta property="og:title" content="大喜利ひろば - 毎日お題に挑戦！面白い回答で競おう">
+    <meta property="og:description" content="毎日更新される大喜利お題に回答して、評価を競おう！ゲストでも投稿OK。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://oogiri-hiroba.vercel.app/">
+    <meta property="og:site_name" content="大喜利ひろば">
+    <meta property="og:locale" content="ja_JP">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@oogiri_hiroba">
+    <meta name="twitter:title" content="大喜利ひろば - 毎日お題に挑戦！">
+    <meta name="twitter:description" content="毎日更新される大喜利お題に回答して、評価を競おう！">
     
     <!-- Google AdSense 審査用コード -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3633766216426604"
@@ -1862,6 +1881,55 @@
             padding: 1rem;
             border-radius: 10px;
             border: 2px solid var(--accent);
+        }
+
+        /* シェアボタン */
+        .answer-share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .share-text-btn {
+            background: #1DA1F2;
+            color: white;
+        }
+
+        .share-text-btn:hover {
+            background: #1a8cd8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(29, 161, 242, 0.3);
+        }
+
+        .share-image-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .share-image-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .share-btn {
+                font-size: 0.8rem;
+                padding: 0.35rem 0.7rem;
+            }
         }
     </style>
 </head>
@@ -4143,7 +4211,7 @@
                 }
                 
                 return `
-                    <div class="answer-card">
+                    <div class="answer-card" data-answer-id="${answer.id}">
                         <div class="answer-avatar">
                             ${avatarHTML}
                         </div>
@@ -4165,6 +4233,17 @@
                             </div>
                             <div class="answer-text">${escapeHtml(answer.text)}</div>
                             ${dateStr ? `<div class="answer-date">📅 ${dateStr}</div>` : ''}
+                            <div class="answer-share-buttons">
+                                <button class="share-btn share-text-btn" onclick="shareToTwitter('${answer.id}', '${escapeHtml(answer.text).replace(/'/g, "\\'")}', '${escapeHtml(answer.odai || currentOdai).replace(/'/g, "\\'")}', '${escapeHtml(answer.name).replace(/'/g, "\\'")}')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    </svg>
+                                    Xでシェア
+                                </button>
+                                <button class="share-btn share-image-btn" onclick="shareAsImage('${answer.id}')">
+                                    📸 画像でシェア
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -5044,6 +5123,83 @@
             }
             if (event.target === termsModal) {
                 closeTermsModal();
+            }
+        }
+
+        // Xシェア関数
+        function shareToTwitter(answerId, answerText, odai, userName) {
+            const url = 'https://oogiri-hiroba.vercel.app/';
+            const text = `🎭 大喜利ひろば
+
+お題: ${odai}
+
+💬 ${answerText}
+by ${userName}
+
+#大喜利 #ボケて`;
+            
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+            window.open(twitterUrl, '_blank', 'width=550,height=420');
+        }
+
+        // 画像化シェア関数
+        async function shareAsImage(answerId) {
+            const card = document.querySelector(`[data-answer-id="${answerId}"]`);
+            if (!card) {
+                alert('回答が見つかりません');
+                return;
+            }
+
+            try {
+                // html2canvasライブラリを動的に読み込み
+                if (!window.html2canvas) {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                    document.head.appendChild(script);
+                    
+                    await new Promise((resolve, reject) => {
+                        script.onload = resolve;
+                        script.onerror = reject;
+                    });
+                }
+
+                // シェアボタンを一時的に非表示
+                const shareButtons = card.querySelector('.answer-share-buttons');
+                const originalDisplay = shareButtons.style.display;
+                shareButtons.style.display = 'none';
+
+                // カードを画像化
+                const canvas = await html2canvas(card, {
+                    backgroundColor: '#FFFFFF',
+                    scale: 2,
+                    logging: false
+                });
+
+                // シェアボタンを元に戻す
+                shareButtons.style.display = originalDisplay;
+
+                // 画像をダウンロード
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `oogiri-answer-${answerId}.png`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+
+                    // ダウンロード後に案内
+                    setTimeout(() => {
+                        if (confirm('画像をダウンロードしました！\n\nXで共有しますか？')) {
+                            const text = `🎭 大喜利ひろばで面白い回答を見つけました！\n\n#大喜利 #ボケて`;
+                            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://oogiri-hiroba.vercel.app/')}`;
+                            window.open(twitterUrl, '_blank', 'width=550,height=420');
+                        }
+                    }, 500);
+                });
+
+            } catch (error) {
+                console.error('画像化エラー:', error);
+                alert('画像の生成に失敗しました');
             }
         }
     </script>
