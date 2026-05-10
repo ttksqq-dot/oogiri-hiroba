@@ -3497,7 +3497,6 @@
             const memberStatsContainer = document.getElementById('memberStatsContainer');
             const nameInput = document.getElementById('nameInput');
             const nameLabel = document.getElementById('nameLabel');
-            const introSection = document.getElementById('introSection');
 
             if (user) {
                 // ユーザー情報を取得
@@ -3549,11 +3548,6 @@
                 nameInput.disabled = true;
                 nameLabel.style.display = 'none';
                 nameInput.style.display = 'none';
-                
-                // ログイン済みユーザーには紹介セクションを非表示
-                if (introSection) {
-                    introSection.style.display = 'none';
-                }
 
                 await loadUserStats(user.uid);
                 await loadUserRanking(user.uid);
@@ -3572,11 +3566,6 @@
                 nameInput.value = '';
                 nameLabel.style.display = 'block';
                 nameInput.style.display = 'block';
-                
-                // ゲストモードでは紹介セクションを表示
-                if (introSection) {
-                    introSection.style.display = 'block';
-                }
 
                 // ゲストの残り投稿回数を表示
                 const guestPosts = JSON.parse(localStorage.getItem('guestPosts')) || [];
