@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重複ユーザー削除ツール</title>
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #FF6B35;
+            margin-bottom: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+        .warning { color: #FF9800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ 重複ユーザー削除ツール</h1>
+        <p>同じニックネームのユーザーを検出して、古い方を削除します。</p>
+        
+        <button id="findDuplicatesBtn" onclick="findDuplicates()">重複を検出</button>
+        <button id="deleteDuplicatesBtn" onclick="deleteDuplicates()" disabled>重複を削除</button>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithPopup, 
+            GoogleAuthProvider,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs,
+            deleteDoc,
+            doc,
+            query,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtA5J1GbPfEeFkyElHKJy7qqHLRzscdrk",
+            authDomain: "ogiri-hiroba.firebaseapp.com",
+            projectId: "ogiri-hiroba",
+            storageBucket: "ogiri-hiroba.firebasestorage.app",
+            messagingSenderId: "778117963805",
+            appId: "1:778117963805:web:8b53b31a000ce8e344e6f4",
+            measurementId: "G-9GM95VXL9N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        window.db = db;
+        window.auth = auth;
+        window.duplicateUsers = [];
+
+        // ログ出力関数
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div class="${type}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        // 重複検出
+        window.findDuplicates = async function() {
+            const btn = document.getElementById('findDuplicatesBtn');
+            btn.disabled = true;
+
+            try {
+                log('========================================', 'info');
+                log('重複ユーザーを検出中...', 'info');
+                
+                // 全ユーザーを取得
+                const usersSnapshot = await getDocs(collection(db, 'users'));
+                const users = [];
+                
+                usersSnapshot.forEach((doc) => {
+                    users.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                log(`全${users.length}人のユーザーを取得しました`, 'info');
+                
+                // 名前でグループ化
+                const nameGroups = {};
+                users.forEach(user => {
+                    const name = user.displayName || '名無し';
+                    if (!nameGroups[name]) {
+                        nameGroups[name] = [];
+                    }
+                    nameGroups[name].push(user);
+                });
+                
+                // 重複を検出
+                window.duplicateUsers = [];
+                for (const name in nameGroups) {
+                    if (nameGroups[name].length > 1) {
+                        log(`\n⚠️ 重複発見: "${name}" が${nameGroups[name].length}人います`, 'warning');
+                        
+                        // 作成日時でソート（新しい順）
+                        const sorted = nameGroups[name].sort((a, b) => {
+                            const dateA = a.createdAt?.toDate?.() || new Date(0);
+                            const dateB = b.createdAt?.toDate?.() || new Date(0);
+                            return dateB - dateA;
+                        });
+                        
+                        // 最新を残して、古いものを削除対象に
+                        const keep = sorted[0];
+                        const toDelete = sorted.slice(1);
+                        
+                        log(`  ✅ 保持: ${keep.id} (評価: ${keep.totalRating || 0}点, 投稿: ${keep.totalPosts || 0}件)`, 'success');
+                        
+                        toDelete.forEach(user => {
+                            log(`  ❌ 削除対象: ${user.id} (評価: ${user.totalRating || 0}点, 投稿: ${user.totalPosts || 0}件)`, 'error');
+                            window.duplicateUsers.push(user);
+                        });
+                    }
+                }
+                
+                log('\n========================================', 'info');
+                if (window.duplicateUsers.length > 0) {
+                    log(`合計${window.duplicateUsers.length}人の重複ユーザーを検出しました`, 'warning');
+                    log('「重複を削除」ボタンをクリックして削除してください', 'info');
+                    document.getElementById('deleteDuplicatesBtn').disabled = false;
+                } else {
+                    log('重複ユーザーは見つかりませんでした', 'success');
+                }
+
+            } catch (error) {
+                log(`❌ エラー: ${error.message}`, 'error');
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        // 重複削除
+        window.deleteDuplicates = async function() {
+            if (window.duplicateUsers.length === 0) {
+                log('削除対象のユーザーがありません', 'warning');
+                return;
+            }
+
+            if (!confirm(`${window.duplicateUsers.length}人のユーザーとその回答を削除します。よろしいですか？`)) {
+                return;
+            }
+
+            const btn = document.getElementById('deleteDuplicatesBtn');
+            btn.disabled = true;
+
+            try {
+                log('\n========================================', 'info');
+                log('重複ユーザーを削除中...', 'info');
+                
+                for (const user of window.duplicateUsers) {
+                    log(`\n削除中: ${user.displayName} (${user.id})`, 'warning');
+                    
+                    // そのユーザーの回答を削除
+                    const answersSnapshot = await getDocs(
+                        query(collection(db, 'answers'), where('userId', '==', user.id))
+                    );
+                    
+                    let answerCount = 0;
+                    for (const answerDoc of answersSnapshot.docs) {
+                        await deleteDoc(doc(db, 'answers', answerDoc.id));
+                        answerCount++;
+                    }
+                    
+                    log(`  📝 ${answerCount}件の回答を削除`, 'info');
+                    
+                    // ユーザーを削除
+                    await deleteDoc(doc(db, 'users', user.id));
+                    log(`  ✅ ユーザーを削除しました`, 'success');
+                    
+                    // レート制限対策
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+                
+                log('\n========================================', 'info');
+                log(`✨ ${window.duplicateUsers.length}人の重複ユーザーを削除しました！`, 'success');
+                window.duplicateUsers = [];
+
+            } catch (error) {
+                log(`❌ エラー: ${error.message}`, 'error');
+                console.error(error);
+            } finally {
+                btn.disabled = true;
+            }
+        };
+
+        // 認証状態の監視
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                log('Googleアカウントでログインしてください', 'error');
+                document.getElementById('findDuplicatesBtn').disabled = true;
+                
+                signInWithPopup(auth, provider)
+                    .then(() => {
+                        log('✅ ログインしました！', 'success');
+                        document.getElementById('findDuplicatesBtn').disabled = false;
+                    })
+                    .catch((error) => {
+                        log(`❌ ログインエラー: ${error.message}`, 'error');
+                    });
+            } else {
+                log(`✅ ログイン中: ${user.email}`, 'success');
+                document.getElementById('findDuplicatesBtn').disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

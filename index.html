@@ -2526,6 +2526,21 @@
 
             try {
                 const user = auth.currentUser;
+                
+                // 重複チェック
+                const usersSnapshot = await getDocs(collection(db, 'users'));
+                let isDuplicate = false;
+                usersSnapshot.forEach((doc) => {
+                    if (doc.data().displayName === nickname && doc.id !== user.uid) {
+                        isDuplicate = true;
+                    }
+                });
+                
+                if (isDuplicate) {
+                    alert('このニックネームは既に使用されています。別のニックネームを入力してください。');
+                    return;
+                }
+                
                 const userRef = doc(db, 'users', user.uid);
                 
                 await setDoc(userRef, {
@@ -2805,8 +2820,23 @@
                 const currentData = userDoc.data();
                 const currentNickname = currentData.displayName || '';
                 
-                // ニックネームが変更されている場合、最終変更日をチェック
+                // ニックネームが変更されている場合
                 if (nickname !== currentNickname) {
+                    // 重複チェック
+                    const usersSnapshot = await getDocs(collection(db, 'users'));
+                    let isDuplicate = false;
+                    usersSnapshot.forEach((doc) => {
+                        if (doc.data().displayName === nickname && doc.id !== user.uid) {
+                            isDuplicate = true;
+                        }
+                    });
+                    
+                    if (isDuplicate) {
+                        alert('このニックネームは既に使用されています。別のニックネームを入力してください。');
+                        return;
+                    }
+                    
+                    // 最終変更日をチェック
                     const lastNameChange = currentData.lastNameChange;
                     
                     if (lastNameChange) {
