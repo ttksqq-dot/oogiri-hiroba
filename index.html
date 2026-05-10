@@ -1915,16 +1915,6 @@
             box-shadow: 0 4px 8px rgba(29, 161, 242, 0.3);
         }
 
-        .share-image-btn {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-        }
-
-        .share-image-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
-        }
-
         @media (max-width: 768px) {
             .share-btn {
                 font-size: 0.8rem;
@@ -4233,6 +4223,7 @@
                             </div>
                             <div class="answer-text">${escapeHtml(answer.text)}</div>
                             ${dateStr ? `<div class="answer-date">📅 ${dateStr}</div>` : ''}
+                            ${isMyAnswer ? `
                             <div class="answer-share-buttons">
                                 <button class="share-btn share-text-btn" onclick="shareToTwitter('${answer.id}', '${escapeHtml(answer.text).replace(/'/g, "\\'")}', '${escapeHtml(answer.odai || currentOdai).replace(/'/g, "\\'")}', '${escapeHtml(answer.name).replace(/'/g, "\\'")}')">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -4240,10 +4231,8 @@
                                     </svg>
                                     Xでシェア
                                 </button>
-                                <button class="share-btn share-image-btn" onclick="shareAsImage('${answer.id}')">
-                                    📸 画像でシェア
-                                </button>
                             </div>
+                            ` : ''}
                         </div>
                     </div>
                 `;
@@ -5130,77 +5119,13 @@
         function shareToTwitter(answerId, answerText, odai, userName) {
             const url = 'https://oogiri-hiroba.vercel.app/';
             const text = `🎭 大喜利ひろば
-
 お題: ${odai}
-
 💬 ${answerText}
 by ${userName}
-
-#大喜利 #ボケて`;
+#大喜利 #大喜利ひろば`;
             
             const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
             window.open(twitterUrl, '_blank', 'width=550,height=420');
-        }
-
-        // 画像化シェア関数
-        async function shareAsImage(answerId) {
-            const card = document.querySelector(`[data-answer-id="${answerId}"]`);
-            if (!card) {
-                alert('回答が見つかりません');
-                return;
-            }
-
-            try {
-                // html2canvasライブラリを動的に読み込み
-                if (!window.html2canvas) {
-                    const script = document.createElement('script');
-                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-                    document.head.appendChild(script);
-                    
-                    await new Promise((resolve, reject) => {
-                        script.onload = resolve;
-                        script.onerror = reject;
-                    });
-                }
-
-                // シェアボタンを一時的に非表示
-                const shareButtons = card.querySelector('.answer-share-buttons');
-                const originalDisplay = shareButtons.style.display;
-                shareButtons.style.display = 'none';
-
-                // カードを画像化
-                const canvas = await html2canvas(card, {
-                    backgroundColor: '#FFFFFF',
-                    scale: 2,
-                    logging: false
-                });
-
-                // シェアボタンを元に戻す
-                shareButtons.style.display = originalDisplay;
-
-                // 画像をダウンロード
-                canvas.toBlob((blob) => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `oogiri-answer-${answerId}.png`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-
-                    // ダウンロード後に案内
-                    setTimeout(() => {
-                        if (confirm('画像をダウンロードしました！\n\nXで共有しますか？')) {
-                            const text = `🎭 大喜利ひろばで面白い回答を見つけました！\n\n#大喜利 #ボケて`;
-                            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://oogiri-hiroba.vercel.app/')}`;
-                            window.open(twitterUrl, '_blank', 'width=550,height=420');
-                        }
-                    }, 500);
-                });
-
-            } catch (error) {
-                console.error('画像化エラー:', error);
-                alert('画像の生成に失敗しました');
-            }
         }
     </script>
 </body>
