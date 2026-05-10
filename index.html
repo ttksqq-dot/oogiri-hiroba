@@ -820,10 +820,30 @@
         }
 
         .odai-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .odai-category {
+            margin-bottom: 1rem;
+        }
+
+        .odai-category-title {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .odai-category-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2rem;
         }
 
         .odai-card {
@@ -2436,18 +2456,85 @@
         };
 
         // お題一覧をレンダリング
+        // お題のカテゴリを判定
+        function getOdaiCategory(odai) {
+            // 🏪 お店・サービス系
+            if (odai.match(/コンビニ|居酒屋|ホテル|カフェ|ファミレス|レストラン|回転寿司|美容室|パン屋|スーパー|図書館|自動販売機|動物病院|遊園地|病院|歯医者|銀行/)) {
+                return 'shop';
+            }
+            // 🎭 エンタメ・メディア系
+            if (odai.match(/YouTuber|アイドル|映画|ドラマ|ラジオ|テレビ|マジシャン|ゲーム/)) {
+                return 'entertainment';
+            }
+            // 👥 人物・職業系
+            if (odai.match(/勇者|忍者|医者|探偵|校長|先生|警察|刑事|裁判官|料理人|店員|面接官|占い師|博士|新入社員|お母さん|赤ちゃん|おじいちゃん/)) {
+                return 'character';
+            }
+            // 🤖 テクノロジー系
+            if (odai.match(/AI|アプリ|SNS|スマホ|ロボット|リモート|カーナビ|スマート家電|冷蔵庫|テレビ番組/)) {
+                return 'tech';
+            }
+            // ✨ 能力・魔法系
+            if (odai.match(/時間を止める|透明人間|不老不死|魔法|能力|超能力/)) {
+                return 'ability';
+            }
+            // 🌍 異世界・ファンタジー系
+            if (odai.match(/異世界|転生|魔王|ドラゴン|魔法使い|ヒーロー|魔法学校|伝説の剣|魔法のランプ|宇宙人|神様/)) {
+                return 'fantasy';
+            }
+            // 📝 その他・一般
+            return 'other';
+        }
+
+        // カテゴリ情報
+        const categories = {
+            'shop': { name: '🏪 お店・サービス系', icon: '🏪' },
+            'entertainment': { name: '🎭 エンタメ・メディア系', icon: '🎭' },
+            'character': { name: '👥 人物・職業系', icon: '👥' },
+            'tech': { name: '🤖 テクノロジー系', icon: '🤖' },
+            'ability': { name: '✨ 能力・魔法系', icon: '✨' },
+            'fantasy': { name: '🌍 異世界・ファンタジー系', icon: '🌍' },
+            'other': { name: '📝 その他・一般', icon: '📝' }
+        };
+
         function renderOdaiList() {
             // 最新の利用可能なお題リストを取得
             odaiList = getAvailableOdaiList();
             
+            // カテゴリ別にお題を分類
+            const categorized = {};
+            odaiList.forEach((odai, index) => {
+                const category = getOdaiCategory(odai);
+                if (!categorized[category]) {
+                    categorized[category] = [];
+                }
+                categorized[category].push({ odai, index });
+            });
+            
+            // カテゴリ順序
+            const categoryOrder = ['shop', 'entertainment', 'character', 'tech', 'ability', 'fantasy', 'other'];
+            
             const grid = document.getElementById('odaiGrid');
-            grid.innerHTML = odaiList.map((odai, index) => `
-                <div class="odai-card" onclick="selectOdai(${index})">
-                    <div class="odai-card-number">お題 ${index + 1}</div>
-                    <div class="odai-card-text">${odai}</div>
-                    <div class="odai-card-count" id="odaiCount${index}">読み込み中...</div>
-                </div>
-            `).join('');
+            grid.innerHTML = categoryOrder.map(categoryKey => {
+                const items = categorized[categoryKey] || [];
+                if (items.length === 0) return '';
+                
+                const category = categories[categoryKey];
+                return `
+                    <div class="odai-category">
+                        <h3 class="odai-category-title">${category.name}</h3>
+                        <div class="odai-category-grid">
+                            ${items.map(({ odai, index }) => `
+                                <div class="odai-card" onclick="selectOdai(${index})">
+                                    <div class="odai-card-number">お題 ${index + 1}</div>
+                                    <div class="odai-card-text">${odai}</div>
+                                    <div class="odai-card-count" id="odaiCount${index}">読み込み中...</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
             
             // 各お題の回答数をカウント
             countAnswersForEachOdai();
