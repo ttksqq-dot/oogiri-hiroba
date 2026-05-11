@@ -2023,9 +2023,6 @@
             }
         }
     </style>
-    
-    <!-- html2canvas for image generation -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
     <!-- ヘッダー -->
@@ -3013,103 +3010,27 @@
             try {
                 // ボタンを無効化
                 button.disabled = true;
-                button.innerHTML = '画像生成中...';
+                button.innerHTML = '投稿画面を開いています...';
                 
                 // お題テキストを取得
                 const odaiText = document.getElementById('odai').textContent;
                 
-                // 画像生成用のキャンバスを作成
-                const canvas = document.createElement('canvas');
-                canvas.width = 1200;
-                canvas.height = 630;
-                const ctx = canvas.getContext('2d');
+                // Xの投稿用テキスト
+                const tweetText = `今日のお題 📝\n\n「${odaiText}」\n\n面白い回答を思いついたらぜひ「大喜利ひろば」に投稿してみてください！\n\n#大喜利 #大喜利ひろば`;
+                const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent('https://oogiri-hiroba.vercel.app')}`;
                 
-                // 背景のグラデーション
-                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-                gradient.addColorStop(0, '#FF6B35');
-                gradient.addColorStop(1, '#F7931E');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                // Xの投稿画面を開く
+                window.open(tweetUrl, '_blank');
                 
-                // 装飾用の円
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-                ctx.beginPath();
-                ctx.arc(100, 100, 150, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(1100, 530, 200, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // タイトル「今日のお題」
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 48px "Zen Maru Gothic", sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('今日のお題', canvas.width / 2, 120);
-                
-                // お題テキスト（中央配置、複数行対応）
-                ctx.font = 'bold 64px "Zen Maru Gothic", sans-serif';
-                ctx.fillStyle = 'white';
-                
-                // テキストを分割して中央に配置
-                const maxWidth = 1000;
-                const words = odaiText.split('');
-                let lines = [];
-                let currentLine = '';
-                
-                for (let word of words) {
-                    const testLine = currentLine + word;
-                    const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxWidth && currentLine !== '') {
-                        lines.push(currentLine);
-                        currentLine = word;
-                    } else {
-                        currentLine = testLine;
-                    }
-                }
-                lines.push(currentLine);
-                
-                // テキストを中央に描画
-                const lineHeight = 80;
-                const startY = (canvas.height - (lines.length * lineHeight)) / 2 + 50;
-                lines.forEach((line, index) => {
-                    ctx.fillText(line, canvas.width / 2, startY + (index * lineHeight));
-                });
-                
-                // サイト名
-                ctx.font = 'bold 32px "Zen Maru Gothic", sans-serif';
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.fillText('大喜利ひろば', canvas.width / 2, canvas.height - 60);
-                
-                // URL
-                ctx.font = '24px Arial, sans-serif';
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-                ctx.fillText('https://oogiri-hiroba.vercel.app', canvas.width / 2, canvas.height - 20);
-                
-                // Canvasを画像に変換してダウンロード
-                canvas.toBlob(async (blob) => {
-                    // 画像をダウンロード
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    const today = new Date();
-                    const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
-                    a.download = `oogiri-hiroba-${dateStr}.png`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    
-                    // Xの投稿画面を開く
-                    const tweetText = `今日のお題 📝\n\n${odaiText}\n\n#大喜利 #大喜利ひろば\n`;
-                    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent('https://oogiri-hiroba.vercel.app')}`;
-                    window.open(tweetUrl, '_blank');
-                    
-                    // ボタンを元に戻す
+                // ボタンを元に戻す
+                setTimeout(() => {
                     button.disabled = false;
                     button.innerHTML = originalText;
-                }, 'image/png');
+                }, 1000);
                 
             } catch (error) {
-                console.error('画像生成エラー:', error);
-                alert('画像の生成に失敗しました。もう一度お試しください。');
+                console.error('投稿エラー:', error);
+                alert('投稿画面を開けませんでした。もう一度お試しください。');
                 button.disabled = false;
                 button.innerHTML = originalText;
             }
