@@ -189,17 +189,16 @@
 
         /* ページ全体のラッパー（メイン + サイドバー） */
         .page-wrapper {
-            display: flex;
-            max-width: 1600px;
+            display: grid;
+            grid-template-columns: 1fr 900px 320px 1fr;
+            gap: 2rem;
+            max-width: 100%;
             margin: 0 auto;
-            gap: 3rem;
-            padding: 0 1rem 0 160px;
-            justify-content: center;
-            align-items: flex-start;
+            padding: 0 1rem;
         }
 
         .main-container {
-            flex: 0 1 900px;
+            grid-column: 2;
             min-width: 0;
         }
 
@@ -210,9 +209,9 @@
 
         /* サイドバー */
         .sidebar {
+            grid-column: 3;
             width: 320px;
             flex-shrink: 0;
-            margin-left: 2rem;
         }
 
         .sidebar-sticky {
