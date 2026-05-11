@@ -193,7 +193,7 @@
             max-width: 1400px;
             margin: 0 auto;
             gap: 1.5rem;
-            padding: 0 1rem;
+            padding: 0 1rem 0 160px;
             justify-content: center;
             align-items: flex-start;
         }
@@ -1276,7 +1276,7 @@
             background: rgba(255,255,255,0.3);
             border: 1px solid white;
             color: white;
-            padding: 0.6rem 1.5rem;
+            padding: 0 1.5rem;
             border-radius: 25px;
             cursor: pointer;
             font-weight: 700;
@@ -1287,6 +1287,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            box-sizing: border-box;
+            line-height: 1;
         }
 
         .odai-list-btn:hover {
@@ -1297,7 +1299,7 @@
         /* ヘッダー内の総投稿数 */
         .header-total-posts {
             background: rgba(255,255,255,0.95);
-            padding: 0.6rem 1.2rem;
+            padding: 0 1.2rem;
             border-radius: 25px;
             height: 44px;
             display: flex;
@@ -1306,6 +1308,7 @@
             gap: 0.3rem;
             border: 2px solid rgba(255,255,255,0.5);
             margin-left: 1rem;
+            box-sizing: border-box;
         }
 
         .header-total-posts-value {
