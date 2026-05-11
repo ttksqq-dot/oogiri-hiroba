@@ -2391,7 +2391,7 @@
                 <h1 style="cursor: pointer;" onclick="goToToday()">大喜利ひろば</h1>
                 <p class="subtitle">みんなで楽しむお題チャレンジ！</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                 <button class="odai-list-btn" onclick="goToToday()">🏠 今日のお題</button>
                 <button class="odai-list-btn" onclick="showOdaiList()">📝 お題一覧</button>
                 <button class="odai-list-btn" onclick="showSpeedOogiri()">⚡ スピード大喜利</button>
@@ -2634,6 +2634,11 @@
                         <div class="intro-feature-text">面白い回答には5段階評価で「いいね」を送ろう</div>
                     </div>
                     <div class="intro-feature">
+                        <div class="intro-feature-icon">⚡</div>
+                        <div class="intro-feature-title">スピード大喜利</div>
+                        <div class="intro-feature-text">1分間で5つのお題に全力回答！腕試しに挑戦しよう</div>
+                    </div>
+                    <div class="intro-feature">
                         <div class="intro-feature-icon">🏆</div>
                         <div class="intro-feature-title">ランキング</div>
                         <div class="intro-feature-text">累計評価スコアでランキング上位を目指そう</div>
@@ -2651,6 +2656,9 @@
                     </button>
                     <button class="intro-secondary-btn" onclick="goToOdaiList()">
                         過去のお題を見る 📋
+                    </button>
+                    <button class="intro-secondary-btn" onclick="showSpeedOogiri()">
+                        スピード大喜利に挑戦 ⚡
                     </button>
                 </div>
             </div>
@@ -3505,8 +3513,8 @@
             document.getElementById('speedOogiriGame').style.display = 'none';
             document.getElementById('speedOogiriResult').style.display = 'none';
             
-            // URL履歴に追加
-            history.pushState({ page: 'speed-oogiri' }, '', '#speed-oogiri');
+            // URL履歴に追加（固有のパスを使用）
+            history.pushState({ page: 'speed-oogiri' }, '', '/speed-oogiri');
         };
 
         // スピード大喜利を開始
@@ -3616,10 +3624,12 @@
             document.getElementById('resultTimeUsed').textContent = timeUsed;
             
             // 回答結果を表示（お題にリンクを追加）
-            const resultHTML = speedOdais.map((odai, index) => `
+            const resultHTML = speedOdais.map((odai, index) => {
+                const odaiIndex = speedOdaiIndices[index];
+                return `
                 <div class="speed-result-item">
                     <div class="speed-result-odai">
-                        <a href="#" onclick="goToOdaiFromSpeed(${speedOdaiIndices[index]}); return false;" style="color: var(--primary); text-decoration: none; font-weight: 700;">
+                        <a href="javascript:void(0)" onclick="goToOdaiFromSpeed(${odaiIndex})" style="color: var(--primary); text-decoration: none; font-weight: 700; cursor: pointer;">
                             お題${index + 1}: ${odai}
                         </a>
                     </div>
@@ -3627,7 +3637,8 @@
                         ${speedAnswers[index] || '（未回答）'}
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
             
             document.getElementById('speedResultAnswers').innerHTML = resultHTML;
             
