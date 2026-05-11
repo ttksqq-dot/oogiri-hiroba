@@ -1649,6 +1649,9 @@
         }
 
         .speed-timer-container {
+            position: sticky;
+            top: 80px;
+            z-index: 100;
             background: var(--card-bg);
             border-radius: 20px;
             padding: 1.5rem;
@@ -1770,7 +1773,9 @@
         .speed-result-screen {
             display: flex;
             justify-content: center;
+            align-items: center;
             padding: 2rem 0;
+            min-height: 60vh;
         }
 
         .speed-result-card {
@@ -1781,6 +1786,7 @@
             width: 100%;
             text-align: center;
             box-shadow: 0 4px 20px var(--shadow);
+            margin: 0 auto;
         }
 
         .speed-result-icon {
@@ -1843,6 +1849,15 @@
             font-weight: 700;
             color: var(--text);
             margin-bottom: 0.5rem;
+        }
+
+        .speed-result-odai a {
+            transition: all 0.2s ease;
+        }
+
+        .speed-result-odai a:hover {
+            text-decoration: underline !important;
+            opacity: 0.8;
         }
 
         .speed-result-answer {
@@ -2376,7 +2391,7 @@
                 <h1 style="cursor: pointer;" onclick="goToToday()">大喜利ひろば</h1>
                 <p class="subtitle">みんなで楽しむお題チャレンジ！</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
                 <button class="odai-list-btn" onclick="goToToday()">🏠 今日のお題</button>
                 <button class="odai-list-btn" onclick="showOdaiList()">📝 お題一覧</button>
                 <button class="odai-list-btn" onclick="showSpeedOogiri()">⚡ スピード大喜利</button>
@@ -3470,6 +3485,7 @@
 
         // スピード大喜利用の変数
         let speedOdais = [];
+        let speedOdaiIndices = []; // お題のインデックスを保存
         let speedAnswers = {};
         let speedTimer = null;
         let speedTimeLeft = 60;
@@ -3498,9 +3514,13 @@
             // 利用可能なお題リストを取得
             const availableOdaiList = getAvailableOdaiList();
             
-            // ランダムに5個選択
-            const shuffled = [...availableOdaiList].sort(() => Math.random() - 0.5);
-            speedOdais = shuffled.slice(0, 5);
+            // ランダムに5個選択（インデックス付き）
+            const odaiWithIndices = availableOdaiList.map((odai, index) => ({ odai, index }));
+            const shuffled = [...odaiWithIndices].sort(() => Math.random() - 0.5);
+            const selected = shuffled.slice(0, 5);
+            
+            speedOdais = selected.map(item => item.odai);
+            speedOdaiIndices = selected.map(item => item.index);
             
             // 回答をリセット
             speedAnswers = {};
@@ -3595,10 +3615,14 @@
             document.getElementById('resultAnsweredCount').textContent = answeredCount;
             document.getElementById('resultTimeUsed').textContent = timeUsed;
             
-            // 回答結果を表示
+            // 回答結果を表示（お題にリンクを追加）
             const resultHTML = speedOdais.map((odai, index) => `
                 <div class="speed-result-item">
-                    <div class="speed-result-odai">お題${index + 1}: ${odai}</div>
+                    <div class="speed-result-odai">
+                        <a href="#" onclick="goToOdaiFromSpeed(${speedOdaiIndices[index]}); return false;" style="color: var(--primary); text-decoration: none; font-weight: 700;">
+                            お題${index + 1}: ${odai}
+                        </a>
+                    </div>
                     <div class="speed-result-answer ${speedAnswers[index] ? '' : 'empty'}">
                         ${speedAnswers[index] || '（未回答）'}
                     </div>
@@ -3610,6 +3634,35 @@
             // 画面切り替え
             document.getElementById('speedOogiriGame').style.display = 'none';
             document.getElementById('speedOogiriResult').style.display = 'block';
+        };
+
+        // スピード大喜利からお題ページに移動
+        window.goToOdaiFromSpeed = function(odaiIndex) {
+            // 最新の利用可能なお題リストを取得
+            odaiList = getAvailableOdaiList();
+            currentOdaiIndex = odaiIndex;
+            
+            // URLを更新
+            updateURL(odaiIndex);
+            
+            // 表示を切り替え
+            document.getElementById('speedOogiriContainer').classList.remove('show');
+            document.getElementById('odaiListContainer').classList.remove('show');
+            document.getElementById('rankingContainer').classList.remove('show');
+            document.getElementById('profileContainer').classList.remove('show');
+            document.getElementById('mainContainer').classList.remove('hide');
+            
+            // お題を表示
+            document.getElementById('odai').textContent = odaiList[odaiIndex];
+            
+            // 回答を読み込み
+            loadAnswers();
+            
+            // URL履歴に追加
+            history.pushState({ page: 'odai', index: odaiIndex }, '', `#odai-${odaiIndex}`);
+            
+            // ページトップにスクロール
+            window.scrollTo(0, 0);
         };
 
         // ランキングページを表示
