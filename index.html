@@ -194,10 +194,12 @@
             margin: 0 auto;
             gap: 1.5rem;
             padding: 0 1rem;
+            justify-content: center;
+            align-items: flex-start;
         }
 
         .main-container {
-            flex: 1;
+            flex: 0 1 900px;
             min-width: 0;
         }
 
@@ -210,6 +212,7 @@
         .sidebar {
             width: 320px;
             flex-shrink: 0;
+            margin-left: auto;
         }
 
         .sidebar-sticky {
@@ -1323,16 +1326,16 @@
             margin: 2rem 0;
             text-align: center;
             background: #f8f9fa;
-            padding: 1rem;
+            padding: 0.5rem;
             border-radius: 10px;
             border: 1px dashed #dee2e6;
-            min-height: 70px; /* さらに小さく調整 */
+            min-height: 70px;
         }
 
         .ad-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #999;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -2396,7 +2399,7 @@
                 <h1 style="cursor: pointer;" onclick="goToToday()">大喜利ひろば</h1>
                 <p class="subtitle">みんなで楽しむお題チャレンジ！</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-right: 1.5rem;">
                 <button class="odai-list-btn" onclick="goToToday()">🏠 今日のお題</button>
                 <button class="odai-list-btn" onclick="showOdaiList()">📝 お題一覧</button>
                 <button class="odai-list-btn" onclick="showSpeedOogiri()">⚡ スピード大喜利</button>
