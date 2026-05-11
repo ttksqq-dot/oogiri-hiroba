@@ -3016,8 +3016,8 @@
                 const odaiText = document.getElementById('odai').textContent;
                 
                 // Xの投稿用テキスト
-                const tweetText = `今日のお題 📝\n\n「${odaiText}」\n\n面白い回答を思いついたらぜひ「大喜利ひろば」に投稿してみてください！\n\n#大喜利 #大喜利ひろば`;
-                const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent('https://oogiri-hiroba.vercel.app')}`;
+                const tweetText = `今日のお題 📝\n\n「${odaiText}」\n\n面白い回答を思いついたらぜひ「大喜利ひろば」に投稿してみてください！\n\nhttps://oogiri-hiroba.vercel.app\n\n#大喜利 #大喜利ひろば`;
+                const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
                 
                 // Xの投稿画面を開く
                 window.open(tweetUrl, '_blank');
