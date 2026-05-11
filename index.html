@@ -190,9 +190,9 @@
         /* ページ全体のラッパー（メイン + サイドバー） */
         .page-wrapper {
             display: flex;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
-            gap: 1.5rem;
+            gap: 3rem;
             padding: 0 1rem 0 160px;
             justify-content: center;
             align-items: flex-start;
@@ -212,7 +212,7 @@
         .sidebar {
             width: 320px;
             flex-shrink: 0;
-            margin-left: auto;
+            margin-left: 2rem;
         }
 
         .sidebar-sticky {
@@ -1048,9 +1048,6 @@
 
         .odai-list-container.show {
             display: block;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 1rem;
         }
 
         .main-container {
@@ -1564,9 +1561,6 @@
 
         .speed-oogiri-container.show {
             display: block;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 1rem;
         }
 
         .speed-oogiri-header {
@@ -3430,10 +3424,6 @@
             document.getElementById('profileContainer').classList.remove('show');
             document.getElementById('mainContainer').classList.add('hide');
             
-            // サイドバーを非表示
-            const sidebar = document.querySelector('.sidebar');
-            if (sidebar) sidebar.style.display = 'none';
-            
             renderOdaiList();
             
             // URL履歴に追加
@@ -3536,10 +3526,6 @@
             document.getElementById('rankingContainer').classList.remove('show');
             document.getElementById('profileContainer').classList.remove('show');
             document.getElementById('speedOogiriContainer').classList.add('show');
-            
-            // サイドバーを非表示
-            const sidebar = document.querySelector('.sidebar');
-            if (sidebar) sidebar.style.display = 'none';
             
             // スタート画面を表示
             document.getElementById('speedOogiriStart').style.display = 'block';
