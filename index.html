@@ -201,6 +201,11 @@
             min-width: 0;
         }
 
+        .main-container.center-mode {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
         /* サイドバー */
         .sidebar {
             width: 320px;
@@ -267,13 +272,7 @@
             background: white;
             border-radius: 15px;
             border: 2px solid #f0f0f0;
-            transition: all 0.3s ease;
-        }
-
-        .intro-feature:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.2);
+            cursor: default;
         }
 
         .intro-feature-icon {
@@ -1298,11 +1297,9 @@
             padding: 0.6rem 1.2rem;
             border-radius: 25px;
             height: 44px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 0.3rem;
             border: 2px solid rgba(255,255,255,0.5);
             margin-left: 1rem;
@@ -3442,8 +3439,15 @@
             document.getElementById('odaiListContainer').classList.remove('show');
             document.getElementById('rankingContainer').classList.remove('show');
             document.getElementById('profileContainer').classList.remove('show');
+            document.getElementById('speedOogiriContainer').classList.remove('show');
             document.getElementById('mainContainer').classList.remove('hide');
             document.getElementById('odai').textContent = odaiList[todayIndex];
+            
+            // ようこそセクションとサイドバーを表示
+            document.getElementById('introSection').style.display = 'block';
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) sidebar.style.display = 'block';
+            document.getElementById('mainContainer').classList.remove('center-mode');
             
             // 回答を読み込み
             loadAnswers();
@@ -3671,6 +3675,12 @@
             document.getElementById('profileContainer').classList.remove('show');
             document.getElementById('mainContainer').classList.remove('hide');
             
+            // ようこそセクションとサイドバーを非表示
+            document.getElementById('introSection').style.display = 'none';
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) sidebar.style.display = 'none';
+            document.getElementById('mainContainer').classList.add('center-mode');
+            
             // お題を表示
             document.getElementById('odai').textContent = odaiList[odaiIndex];
             
@@ -3819,6 +3829,13 @@
             document.getElementById('rankingContainer').classList.remove('show');
             document.getElementById('mainContainer').classList.remove('hide');
             document.getElementById('odai').textContent = odaiList[index];
+            
+            // ようこそセクションとサイドバーを非表示
+            document.getElementById('introSection').style.display = 'none';
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) sidebar.style.display = 'none';
+            document.getElementById('mainContainer').classList.add('center-mode');
+            
             loadAnswers();
         };
 
