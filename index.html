@@ -2412,13 +2412,13 @@
             }
 
             .header {
-                padding: 1rem;
+                padding: 1rem 0.5rem;
             }
 
             .header-content {
                 flex-direction: column;
-                padding: 1rem 0.5rem;
-                gap: 1rem;
+                padding: 0;
+                gap: 0.8rem;
                 width: 100%;
             }
 
@@ -2430,25 +2430,35 @@
 
             .header-left h1 {
                 font-size: 2rem;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.3rem;
             }
 
             .subtitle {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+            }
+
+            /* ボタンエリア */
+            .header-content > div:nth-child(2) {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+                margin: 0 !important;
             }
 
             .odai-list-btn {
-                font-size: 1rem;
-                height: 50px;
-                padding: 0 1.2rem;
-                margin: 0.25rem;
-                width: calc(50% - 0.5rem);
+                font-size: 0.95rem;
+                height: 44px;
+                padding: 0 1rem;
+                margin: 0;
+                width: 100%;
             }
 
             .header-total-posts {
-                font-size: 0.95rem;
-                padding: 0.6rem 1rem;
-                margin: 0.5rem auto;
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+                margin: 0;
+                width: 100%;
             }
 
             .user-info {
@@ -2457,7 +2467,10 @@
             }
 
             .login-btn {
-                font-size: 1rem;
+                font-size: 0.95rem;
+                padding: 0.6rem 1.5rem;
+            }
+        }
                 padding: 0.7rem 1.5rem;
             }
         }
