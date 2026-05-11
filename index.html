@@ -1543,6 +1543,350 @@
             }
         }
 
+        /* スピード大喜利ページ用スタイル */
+        .speed-oogiri-container {
+            display: none;
+        }
+
+        .speed-oogiri-container.show {
+            display: block;
+        }
+
+        .speed-oogiri-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .speed-oogiri-header h2 {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .speed-oogiri-header p {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* スタート画面 */
+        .speed-start-screen {
+            display: flex;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .speed-start-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .speed-start-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .speed-start-card h3 {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+        }
+
+        .speed-rules {
+            text-align: left;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+        }
+
+        .speed-rules li {
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg);
+            border-radius: 10px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .speed-rules li::before {
+            content: '✓ ';
+            color: var(--primary);
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+
+        .speed-start-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .speed-start-btn:hover {
+            background: #e55a2f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        /* ゲーム画面 */
+        .speed-game-screen {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .speed-timer-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .speed-timer-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .speed-timer {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .speed-timer-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: var(--bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .speed-timer-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            transition: width 0.3s linear;
+        }
+
+        .speed-progress {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+        }
+
+        .speed-odai-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .speed-odai-item {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        .speed-odai-item.answered {
+            opacity: 0.7;
+            border: 2px solid var(--primary);
+        }
+
+        .speed-odai-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        .speed-odai-text {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .speed-answer-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 1rem;
+            border: 2px solid var(--bg);
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .speed-answer-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .speed-finish-btn {
+            width: 100%;
+            background: #666;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .speed-finish-btn:hover {
+            background: #555;
+        }
+
+        /* 結果画面 */
+        .speed-result-screen {
+            display: flex;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .speed-result-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .speed-result-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .speed-result-card h3 {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 2rem;
+        }
+
+        .speed-result-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .speed-result-stat {
+            text-align: center;
+        }
+
+        .speed-result-value {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .speed-result-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .speed-result-answers {
+            text-align: left;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--bg);
+            border-radius: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .speed-result-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .speed-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .speed-result-odai {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .speed-result-answer {
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .speed-result-answer.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .speed-result-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .speed-retry-btn, .speed-back-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .speed-back-btn {
+            background: #666;
+        }
+
+        .speed-retry-btn:hover {
+            background: #e55a2f;
+            transform: translateY(-2px);
+        }
+
+        .speed-back-btn:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
         /* プロフィールページ用スタイル */
         .profile-container {
             display: none;
@@ -2035,6 +2379,7 @@
             <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                 <button class="odai-list-btn" onclick="goToToday()">🏠 今日のお題</button>
                 <button class="odai-list-btn" onclick="showOdaiList()">📝 お題一覧</button>
+                <button class="odai-list-btn" onclick="showSpeedOogiri()">⚡ スピード大喜利</button>
                 <button class="odai-list-btn" onclick="showRankingPage()">🏆 ランキング</button>
                 <div class="header-total-posts">
                     <span class="header-total-posts-value" id="headerTotalPostsCount">0</span>
@@ -2106,6 +2451,88 @@
                 <div class="empty-state">
                     <div class="empty-state-icon">🔄</div>
                     <p class="empty-state-text">読み込み中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- スピード大喜利ページ -->
+    <div class="speed-oogiri-container" id="speedOogiriContainer">
+        <div class="container">
+            <button class="back-to-main-btn" onclick="goToToday()">
+                ← トップページに戻る
+            </button>
+            <div class="speed-oogiri-header">
+                <h2>⚡ スピード大喜利</h2>
+                <p>1分間で5つのお題に全力回答！</p>
+            </div>
+
+            <!-- スタート画面 -->
+            <div id="speedOogiriStart" class="speed-start-screen">
+                <div class="speed-start-card">
+                    <div class="speed-start-icon">⏱️</div>
+                    <h3>ルール説明</h3>
+                    <ul class="speed-rules">
+                        <li>ランダムに選ばれた5つのお題が表示されます</li>
+                        <li>制限時間は1分間です</li>
+                        <li>できるだけ多くのお題に回答しましょう</li>
+                        <li>時間内に回答できなくてもOK！</li>
+                    </ul>
+                    <button class="speed-start-btn" onclick="startSpeedOogiri()">
+                        🚀 スタート！
+                    </button>
+                </div>
+            </div>
+
+            <!-- ゲーム画面 -->
+            <div id="speedOogiriGame" class="speed-game-screen" style="display: none;">
+                <div class="speed-timer-container">
+                    <div class="speed-timer-label">残り時間</div>
+                    <div class="speed-timer" id="speedTimer">60</div>
+                    <div class="speed-timer-bar-bg">
+                        <div class="speed-timer-bar" id="speedTimerBar"></div>
+                    </div>
+                </div>
+
+                <div class="speed-progress">
+                    回答済み: <span id="speedAnsweredCount">0</span> / 5
+                </div>
+
+                <div id="speedOdaiList" class="speed-odai-list">
+                    <!-- お題がJavaScriptで動的に生成されます -->
+                </div>
+
+                <button class="speed-finish-btn" onclick="finishSpeedOogiri()">
+                    ⏹️ 終了する
+                </button>
+            </div>
+
+            <!-- 結果画面 -->
+            <div id="speedOogiriResult" class="speed-result-screen" style="display: none;">
+                <div class="speed-result-card">
+                    <div class="speed-result-icon">🎉</div>
+                    <h3>お疲れ様でした！</h3>
+                    <div class="speed-result-stats">
+                        <div class="speed-result-stat">
+                            <div class="speed-result-value" id="resultAnsweredCount">0</div>
+                            <div class="speed-result-label">回答数</div>
+                        </div>
+                        <div class="speed-result-stat">
+                            <div class="speed-result-value" id="resultTimeUsed">60</div>
+                            <div class="speed-result-label">使用時間（秒）</div>
+                        </div>
+                    </div>
+                    <div class="speed-result-answers" id="speedResultAnswers">
+                        <!-- 回答結果がここに表示されます -->
+                    </div>
+                    <div class="speed-result-buttons">
+                        <button class="speed-retry-btn" onclick="startSpeedOogiri()">
+                            🔄 もう一度挑戦
+                        </button>
+                        <button class="speed-back-btn" onclick="goToToday()">
+                            🏠 トップに戻る
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3039,6 +3466,150 @@
         // お題一覧ページへ移動（showOdaiListのエイリアス）
         window.goToOdaiList = function() {
             showOdaiList();
+        };
+
+        // スピード大喜利用の変数
+        let speedOdais = [];
+        let speedAnswers = {};
+        let speedTimer = null;
+        let speedTimeLeft = 60;
+        let speedStartTime = null;
+
+        // スピード大喜利ページを表示
+        window.showSpeedOogiri = function() {
+            // 表示を切り替え
+            document.getElementById('odaiListContainer').classList.remove('show');
+            document.getElementById('mainContainer').classList.add('hide');
+            document.getElementById('rankingContainer').classList.remove('show');
+            document.getElementById('profileContainer').classList.remove('show');
+            document.getElementById('speedOogiriContainer').classList.add('show');
+            
+            // スタート画面を表示
+            document.getElementById('speedOogiriStart').style.display = 'block';
+            document.getElementById('speedOogiriGame').style.display = 'none';
+            document.getElementById('speedOogiriResult').style.display = 'none';
+            
+            // URL履歴に追加
+            history.pushState({ page: 'speed-oogiri' }, '', '#speed-oogiri');
+        };
+
+        // スピード大喜利を開始
+        window.startSpeedOogiri = function() {
+            // 利用可能なお題リストを取得
+            const availableOdaiList = getAvailableOdaiList();
+            
+            // ランダムに5個選択
+            const shuffled = [...availableOdaiList].sort(() => Math.random() - 0.5);
+            speedOdais = shuffled.slice(0, 5);
+            
+            // 回答をリセット
+            speedAnswers = {};
+            speedTimeLeft = 60;
+            speedStartTime = Date.now();
+            
+            // お題を表示
+            const odaiListHTML = speedOdais.map((odai, index) => `
+                <div class="speed-odai-item" id="speedOdai${index}">
+                    <div class="speed-odai-number">お題 ${index + 1}</div>
+                    <div class="speed-odai-text">${odai}</div>
+                    <textarea 
+                        class="speed-answer-input" 
+                        id="speedAnswer${index}"
+                        placeholder="ここに回答を入力..."
+                        oninput="updateSpeedProgress()"
+                    ></textarea>
+                </div>
+            `).join('');
+            
+            document.getElementById('speedOdaiList').innerHTML = odaiListHTML;
+            
+            // 画面切り替え
+            document.getElementById('speedOogiriStart').style.display = 'none';
+            document.getElementById('speedOogiriGame').style.display = 'block';
+            document.getElementById('speedOogiriResult').style.display = 'none';
+            
+            // タイマー開始
+            startSpeedTimer();
+        };
+
+        // タイマーを開始
+        function startSpeedTimer() {
+            if (speedTimer) clearInterval(speedTimer);
+            
+            speedTimer = setInterval(() => {
+                speedTimeLeft--;
+                document.getElementById('speedTimer').textContent = speedTimeLeft;
+                
+                // プログレスバーを更新
+                const progress = (speedTimeLeft / 60) * 100;
+                document.getElementById('speedTimerBar').style.width = progress + '%';
+                
+                // 残り10秒で色を変える
+                if (speedTimeLeft <= 10) {
+                    document.getElementById('speedTimer').style.color = '#e74c3c';
+                }
+                
+                // 時間切れ
+                if (speedTimeLeft <= 0) {
+                    clearInterval(speedTimer);
+                    finishSpeedOogiri();
+                }
+            }, 1000);
+        }
+
+        // 回答進捗を更新
+        window.updateSpeedProgress = function() {
+            let answeredCount = 0;
+            for (let i = 0; i < 5; i++) {
+                const answer = document.getElementById(`speedAnswer${i}`).value.trim();
+                if (answer) {
+                    answeredCount++;
+                    document.getElementById(`speedOdai${i}`).classList.add('answered');
+                } else {
+                    document.getElementById(`speedOdai${i}`).classList.remove('answered');
+                }
+            }
+            document.getElementById('speedAnsweredCount').textContent = answeredCount;
+        };
+
+        // スピード大喜利を終了
+        window.finishSpeedOogiri = function() {
+            // タイマー停止
+            if (speedTimer) {
+                clearInterval(speedTimer);
+                speedTimer = null;
+            }
+            
+            // 回答を収集
+            let answeredCount = 0;
+            for (let i = 0; i < 5; i++) {
+                const answer = document.getElementById(`speedAnswer${i}`).value.trim();
+                speedAnswers[i] = answer;
+                if (answer) answeredCount++;
+            }
+            
+            // 使用時間を計算
+            const timeUsed = 60 - speedTimeLeft;
+            
+            // 結果を表示
+            document.getElementById('resultAnsweredCount').textContent = answeredCount;
+            document.getElementById('resultTimeUsed').textContent = timeUsed;
+            
+            // 回答結果を表示
+            const resultHTML = speedOdais.map((odai, index) => `
+                <div class="speed-result-item">
+                    <div class="speed-result-odai">お題${index + 1}: ${odai}</div>
+                    <div class="speed-result-answer ${speedAnswers[index] ? '' : 'empty'}">
+                        ${speedAnswers[index] || '（未回答）'}
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('speedResultAnswers').innerHTML = resultHTML;
+            
+            // 画面切り替え
+            document.getElementById('speedOogiriGame').style.display = 'none';
+            document.getElementById('speedOogiriResult').style.display = 'block';
         };
 
         // ランキングページを表示
