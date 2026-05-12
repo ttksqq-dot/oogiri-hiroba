@@ -3468,8 +3468,13 @@
 
         // 現在表示可能なお題数を計算
         function getAvailableOdaiCount() {
+            // JST基準で現在日時を取得
             const now = new Date();
-            const diffTime = now - newOdaiStartDate;
+            const jstOffset = 9 * 60;
+            const utcMinutes = now.getTime() / 60000 + now.getTimezoneOffset();
+            const jstNow = new Date((utcMinutes + jstOffset) * 60000);
+            
+            const diffTime = jstNow - newOdaiStartDate;
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             
             // 5/10より前は既存の99問のみ
@@ -4104,15 +4109,25 @@
             // 最新の利用可能なお題リストを取得
             odaiList = getAvailableOdaiList();
             
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // 時刻をリセット
+            // 日本時間（JST）で今日の日付を取得
+            const now = new Date();
+            const jstOffset = 9 * 60; // JST = UTC+9
+            const utcMinutes = now.getTime() / 60000 + now.getTimezoneOffset();
+            const jstTime = new Date((utcMinutes + jstOffset) * 60000);
+            jstTime.setHours(0, 0, 0, 0);
             
-            // 2026年5月10日を基準日とする（お題リスト開始日）
-            const baseDate = new Date('2026-05-10');
+            // 2026年5月10日 JST を基準日とする
+            const baseDate = new Date(2026, 4, 10); // month is 0-indexed
             baseDate.setHours(0, 0, 0, 0);
             
-            const diffTime = today - baseDate;
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            // JST基準の今日とbaseDateの差分を計算
+            const todayStr = `${jstTime.getFullYear()}-${String(jstTime.getMonth()+1).padStart(2,'0')}-${String(jstTime.getDate()).padStart(2,'0')}`;
+            const baseStr = '2026-05-10';
+            const todayParts = todayStr.split('-').map(Number);
+            const baseParts = baseStr.split('-').map(Number);
+            const todayDate = new Date(todayParts[0], todayParts[1]-1, todayParts[2]);
+            const baseDate2 = new Date(baseParts[0], baseParts[1]-1, baseParts[2]);
+            const diffDays = Math.floor((todayDate - baseDate2) / (1000 * 60 * 60 * 24));
             
             // 基準日より前の場合は最後のお題を表示
             if (diffDays < 0) {
