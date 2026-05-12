@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>大喜利ひろば - 毎日お題に挑戦！面白い回答で競おう</title>
     
     <!-- Google Analytics 4 -->
@@ -3466,20 +3469,37 @@
         // 新しいお題の公開開始日（2026年5月10日）
         const newOdaiStartDate = new Date('2026-05-10T00:00:00+09:00');
 
+        // ===== JST日付計算ヘルパー =====
+        // 日本時間（Asia/Tokyo）の今日の日付を YYYY-MM-DD 形式で返す
+        function getJSTDateString() {
+            const formatter = new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Asia/Tokyo',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            return formatter.format(new Date()); // "2026-05-12" 形式
+        }
+
+        // YYYY-MM-DD 文字列を YYYY,MM,DD の数値配列に
+        function parseDateString(dateStr) {
+            const parts = dateStr.split('-').map(Number);
+            return { year: parts[0], month: parts[1], day: parts[2] };
+        }
+
+        // 基準日(2026-05-10)からの経過日数を取得（JST基準）
+        function getDaysSinceBase() {
+            const todayStr = getJSTDateString();
+            const today = parseDateString(todayStr);
+            // Date.UTCで両方の日付をUTCミリ秒に変換して計算
+            const todayUTC = Date.UTC(today.year, today.month - 1, today.day);
+            const baseUTC = Date.UTC(2026, 4, 10); // 2026年5月10日
+            return Math.round((todayUTC - baseUTC) / (1000 * 60 * 60 * 24));
+        }
+
         // 現在表示可能なお題数を計算
         function getAvailableOdaiCount() {
-            // 日本時間（JST = UTC+9）の今日の年月日を取得
-            const now = new Date();
-            const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-            const jstMs = utcMs + 9 * 60 * 60000;
-            const jstDate = new Date(jstMs);
-            const y = jstDate.getUTCFullYear();
-            const m = jstDate.getUTCMonth();
-            const d = jstDate.getUTCDate();
-            
-            const todayUTC = Date.UTC(y, m, d);
-            const baseUTC = Date.UTC(2026, 4, 10); // 2026年5月10日
-            const diffDays = Math.round((todayUTC - baseUTC) / (1000 * 60 * 60 * 24));
+            const diffDays = getDaysSinceBase();
             
             // 5/10より前は既存の99問のみ
             if (diffDays < 0) {
@@ -4113,21 +4133,8 @@
             // 最新の利用可能なお題リストを取得
             odaiList = getAvailableOdaiList();
             
-            // 日本時間（JST = UTC+9）の今日の年月日を取得
-            const now = new Date();
-            const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-            const jstMs = utcMs + 9 * 60 * 60000;
-            const jstDate = new Date(jstMs);
-            
-            // YYYY-MM-DD形式の文字列で今日を取得
-            const y = jstDate.getUTCFullYear();
-            const m = jstDate.getUTCMonth();
-            const d = jstDate.getUTCDate();
-            
-            // 同じUTCで基準日(2026-05-10 JST)も作成し、日数差を計算
-            const todayUTC = Date.UTC(y, m, d);
-            const baseUTC = Date.UTC(2026, 4, 10); // 2026年5月10日
-            const diffDays = Math.round((todayUTC - baseUTC) / (1000 * 60 * 60 * 24));
+            // 基準日(2026-05-10 JST)からの経過日数を取得
+            const diffDays = getDaysSinceBase();
             
             // 基準日より前の場合は最後のお題を表示
             if (diffDays < 0) {
