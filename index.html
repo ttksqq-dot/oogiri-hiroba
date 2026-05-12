@@ -54,6 +54,11 @@
             --info: #2196F3;
         }
 
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
         body {
             font-family: 'Noto Sans JP', sans-serif;
             background: var(--bg);
@@ -362,7 +367,15 @@
             }
 
             .page-wrapper {
+                display: block;
                 padding: 0 1rem;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            .main-container {
+                max-width: 100%;
+                width: 100%;
             }
 
             .header-content {
