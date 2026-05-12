@@ -4145,25 +4145,24 @@
             return diffDays % odaiList.length;
         }
 
-        const initialOdaiIndex = getOdaiIndexFromURL();
         // 初期化時に最新のお題リストを取得
         odaiList = getAvailableOdaiList();
         
-        if (initialOdaiIndex !== null && initialOdaiIndex >= 0 && initialOdaiIndex < odaiList.length) {
-            // URLパラメータで特定のお題を表示
-            currentOdaiIndex = initialOdaiIndex;
-            document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
-        } else {
-            // 今日のお題を表示（URLパラメータは付けない）
-            currentOdaiIndex = getTodaysOdaiIndex();
-            document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
-            // updateURL(currentOdaiIndex); // URLに?odai=Nを書き込まない
+        // トップページでは常に「今日のお題」を表示する
+        // URLに?odai=Nが付いていた場合（古いブックマーク等）は無視してパラメータを削除
+        currentOdaiIndex = getTodaysOdaiIndex();
+        document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
+        
+        // URLに ?odai=N が付いていたら削除（古いブックマーク対応）
+        if (window.location.search.includes('odai=')) {
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, '', cleanUrl);
         }
         
         // ===== デバッグ情報を画面に表示（一時的） =====
         try {
             const debugInfo = {
-                version: 'v2026-05-12-A',
+                version: 'v2026-05-12-B',
                 jstDate: getJSTDateString(),
                 diffDays: getDaysSinceBase(),
                 odaiCount: odaiList.length,
