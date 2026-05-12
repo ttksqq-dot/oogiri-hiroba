@@ -3468,12 +3468,18 @@
 
         // 現在表示可能なお題数を計算
         function getAvailableOdaiCount() {
-            // JST基準で今日の日付を取得
+            // 日本時間（JST = UTC+9）の今日の年月日を取得
             const now = new Date();
-            const jstNow = new Date(now.getTime() + (9 * 60 + now.getTimezoneOffset()) * 60000);
-            const today = new Date(jstNow.getFullYear(), jstNow.getMonth(), jstNow.getDate());
-            const baseDate = new Date(2026, 4, 10); // 2026-05-10
-            const diffDays = Math.round((today - baseDate) / (1000 * 60 * 60 * 24));
+            const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+            const jstMs = utcMs + 9 * 60 * 60000;
+            const jstDate = new Date(jstMs);
+            const y = jstDate.getUTCFullYear();
+            const m = jstDate.getUTCMonth();
+            const d = jstDate.getUTCDate();
+            
+            const todayUTC = Date.UTC(y, m, d);
+            const baseUTC = Date.UTC(2026, 4, 10); // 2026年5月10日
+            const diffDays = Math.round((todayUTC - baseUTC) / (1000 * 60 * 60 * 24));
             
             // 5/10より前は既存の99問のみ
             if (diffDays < 0) {
@@ -4107,18 +4113,21 @@
             // 最新の利用可能なお題リストを取得
             odaiList = getAvailableOdaiList();
             
-            // 日本時間（JST = UTC+9）で今日の日付を取得
+            // 日本時間（JST = UTC+9）の今日の年月日を取得
             const now = new Date();
-            const jstNow = new Date(now.getTime() + (9 * 60 + now.getTimezoneOffset()) * 60000);
-            const todayYear = jstNow.getFullYear();
-            const todayMonth = jstNow.getMonth();
-            const todayDay = jstNow.getDate();
+            const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+            const jstMs = utcMs + 9 * 60 * 60000;
+            const jstDate = new Date(jstMs);
             
-            // 2026年5月10日を基準日とする
-            // 基準日からの経過日数を計算（両方ローカルDateで統一）
-            const today = new Date(todayYear, todayMonth, todayDay);
-            const baseDate = new Date(2026, 4, 10); // 2026-05-10
-            const diffDays = Math.round((today - baseDate) / (1000 * 60 * 60 * 24));
+            // YYYY-MM-DD形式の文字列で今日を取得
+            const y = jstDate.getUTCFullYear();
+            const m = jstDate.getUTCMonth();
+            const d = jstDate.getUTCDate();
+            
+            // 同じUTCで基準日(2026-05-10 JST)も作成し、日数差を計算
+            const todayUTC = Date.UTC(y, m, d);
+            const baseUTC = Date.UTC(2026, 4, 10); // 2026年5月10日
+            const diffDays = Math.round((todayUTC - baseUTC) / (1000 * 60 * 60 * 24));
             
             // 基準日より前の場合は最後のお題を表示
             if (diffDays < 0) {
@@ -4138,10 +4147,10 @@
             currentOdaiIndex = initialOdaiIndex;
             document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
         } else {
-            // 今日のお題を表示
+            // 今日のお題を表示（URLパラメータは付けない）
             currentOdaiIndex = getTodaysOdaiIndex();
             document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
-            updateURL(currentOdaiIndex);
+            // updateURL(currentOdaiIndex); // URLに?odai=Nを書き込まない
         }
 
         // アイコン選択用のグローバル変数
