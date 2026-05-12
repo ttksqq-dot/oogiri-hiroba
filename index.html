@@ -111,6 +111,14 @@
             opacity: 0.95;
         }
 
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-right: 1.5rem;
+        }
+
         .user-info {
             display: flex;
             align-items: center;
@@ -2439,7 +2447,7 @@
             }
 
             /* ボタンエリアを2列グリッドに */
-            .header-content > div:nth-child(2) {
+            .header-buttons {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 0.4rem;
@@ -2487,7 +2495,7 @@
                 <h1 style="cursor: pointer;" onclick="goToToday()">大喜利ひろば</h1>
                 <p class="subtitle">みんなで楽しむお題チャレンジ！</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-right: 1.5rem;">
+            <div class="header-buttons">
                 <button class="odai-list-btn" onclick="goToToday()">🏠 今日のお題</button>
                 <button class="odai-list-btn" onclick="showOdaiList()">📝 お題一覧</button>
                 <button class="odai-list-btn" onclick="showSpeedOogiri()">⚡ スピード大喜利</button>
