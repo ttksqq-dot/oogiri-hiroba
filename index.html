@@ -4159,6 +4159,31 @@
             document.getElementById('odai').textContent = odaiList[currentOdaiIndex];
             // updateURL(currentOdaiIndex); // URLに?odai=Nを書き込まない
         }
+        
+        // ===== デバッグ情報を画面に表示（一時的） =====
+        try {
+            const debugInfo = {
+                version: 'v2026-05-12-A',
+                jstDate: getJSTDateString(),
+                diffDays: getDaysSinceBase(),
+                odaiCount: odaiList.length,
+                currentIndex: currentOdaiIndex,
+                currentOdai: odaiList[currentOdaiIndex],
+                url: window.location.href,
+                userAgent: navigator.userAgent.substring(0, 80),
+                clientTime: new Date().toString()
+            };
+            const debugEl = document.createElement('div');
+            debugEl.id = 'debugInfo';
+            debugEl.style.cssText = 'background:#fff3cd;border:2px solid #ff6b35;padding:10px;margin:10px;font-size:11px;font-family:monospace;white-space:pre-wrap;word-break:break-all;border-radius:8px;';
+            debugEl.textContent = '【デバッグ情報】\n' + JSON.stringify(debugInfo, null, 2);
+            const odaiEl = document.getElementById('odai');
+            if (odaiEl && odaiEl.parentElement) {
+                odaiEl.parentElement.insertBefore(debugEl, odaiEl.nextSibling);
+            }
+        } catch(e) {
+            console.error('Debug error:', e);
+        }
 
         // アイコン選択用のグローバル変数
         let selectedAvatar = '👤'; // デフォルトアイコン
