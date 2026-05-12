@@ -3468,14 +3468,12 @@
 
         // 現在表示可能なお題数を計算
         function getAvailableOdaiCount() {
-            // JST基準で現在日時を取得
+            // JST基準で今日の日付を取得
             const now = new Date();
-            const jstOffset = 9 * 60;
-            const utcMinutes = now.getTime() / 60000 + now.getTimezoneOffset();
-            const jstNow = new Date((utcMinutes + jstOffset) * 60000);
-            
-            const diffTime = jstNow - newOdaiStartDate;
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const jstNow = new Date(now.getTime() + (9 * 60 + now.getTimezoneOffset()) * 60000);
+            const today = new Date(jstNow.getFullYear(), jstNow.getMonth(), jstNow.getDate());
+            const baseDate = new Date(2026, 4, 10); // 2026-05-10
+            const diffDays = Math.round((today - baseDate) / (1000 * 60 * 60 * 24));
             
             // 5/10より前は既存の99問のみ
             if (diffDays < 0) {
@@ -4109,25 +4107,18 @@
             // 最新の利用可能なお題リストを取得
             odaiList = getAvailableOdaiList();
             
-            // 日本時間（JST）で今日の日付を取得
+            // 日本時間（JST = UTC+9）で今日の日付を取得
             const now = new Date();
-            const jstOffset = 9 * 60; // JST = UTC+9
-            const utcMinutes = now.getTime() / 60000 + now.getTimezoneOffset();
-            const jstTime = new Date((utcMinutes + jstOffset) * 60000);
-            jstTime.setHours(0, 0, 0, 0);
+            const jstNow = new Date(now.getTime() + (9 * 60 + now.getTimezoneOffset()) * 60000);
+            const todayYear = jstNow.getFullYear();
+            const todayMonth = jstNow.getMonth();
+            const todayDay = jstNow.getDate();
             
-            // 2026年5月10日 JST を基準日とする
-            const baseDate = new Date(2026, 4, 10); // month is 0-indexed
-            baseDate.setHours(0, 0, 0, 0);
-            
-            // JST基準の今日とbaseDateの差分を計算
-            const todayStr = `${jstTime.getFullYear()}-${String(jstTime.getMonth()+1).padStart(2,'0')}-${String(jstTime.getDate()).padStart(2,'0')}`;
-            const baseStr = '2026-05-10';
-            const todayParts = todayStr.split('-').map(Number);
-            const baseParts = baseStr.split('-').map(Number);
-            const todayDate = new Date(todayParts[0], todayParts[1]-1, todayParts[2]);
-            const baseDate2 = new Date(baseParts[0], baseParts[1]-1, baseParts[2]);
-            const diffDays = Math.floor((todayDate - baseDate2) / (1000 * 60 * 60 * 24));
+            // 2026年5月10日を基準日とする
+            // 基準日からの経過日数を計算（両方ローカルDateで統一）
+            const today = new Date(todayYear, todayMonth, todayDay);
+            const baseDate = new Date(2026, 4, 10); // 2026-05-10
+            const diffDays = Math.round((today - baseDate) / (1000 * 60 * 60 * 24));
             
             // 基準日より前の場合は最後のお題を表示
             if (diffDays < 0) {
